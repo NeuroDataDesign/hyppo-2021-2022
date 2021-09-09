@@ -1,1 +1,97 @@
+https://hyppo.neurodata.io/tutorials/overview.html HYPPO API
 
+Overview summary
+	- hyppo is a multivariate hypothesis testing package
+		○ Independence testing, k-sample testing, time series independence testing, etc.
+		○ It's mainly defined to be a multivariate hypothesis testing package
+	- Conventions used within hyppo
+		○ All the tests within hyppo has a statistic and test method (test usually the one being used to find p-value
+		○ All the tests are relegated to a single class (all of them have a test method) (maybe find out more about this)
+			§ Returns a test statistic and a p-value
+			§ Recommended using this method
+		○ All functions and classes accept numpy.ndarray as inputs
+		○ Input data matrices have the shape of (n,p): n being number of samples and p being number of dimensions (features)
+Library summary
+	- Hyppo.independence, hyppo.sample, hyppo.time_series, hyppo.discrim and hyppo.tools are the modules used
+		○ Hyppo.tools does not contain any actual tests, but has functions that generates simulated data (this data is used to evaluate the methods and calculate p-value or other things [ask TA about this portion maybe?]
+Workflow summary
+	- W_shaped creates a w_shaped curve and is done by having 1D x and 1D y
+	- Sns.set (seaborn) is done to make plots look pretty
+	- And using plt package it can show the figure itself
+	- How can we tell dependance of the x and y (without looking at the code?)
+		○ Do an independence test in the multiscale graph correlation (MGC)
+			§ Most of the tests have a compute_distance parameter
+			§ Each test also has a method that has a reps parameter that controls the replications of hyppo.tools.perm_test
+			§ Workers parameter controls the number of threads when running paralleized code
+				□ Highly recommended using a number >= 1 in general since speed increases are noticeable
+		○ Remember since a p-value is less than the alpha level of 0.05 the variables listed are independent
+    
+Independence Testing
+	- Desirable to answer many questions:
+		○ Does brain connectivity effect creativity? Does gene expression effect cancer? Does something effect something else?
+		○ Consider random variables X and Y with distributions FX and Fy respectively, and joint distribution is FXY=FY|X FX. When performing independence testing, we are seeing whether or not FY|X=FY
+		○ General premise is to test:
+			§ 
+		○ The test method is the one that returns the test statistic and p-value
+	- Pearson's Correlation Multivariate Variants
+		○ Cannonical correlation (CCA) and Rank Value (RV) are multivariate analogues of Pearson's correlation
+			§ Wanna read more? Go to hyppo.independence.CCA and hyppo.independence.RV
+		○ Both of the tests above are not distance based and has no compute_distance parameter
+	- Distance and Kernel Based Tests
+		○ Heller Heller Gorfine (HHG) is a multivariate independence test that compares intersample distance and computes a Pearson statistic (hyppo independence.HHG)
+		○ Distance Correlation (Dcorr) is a multivariate independence test based on energy distance (hyppo.independence.Dcorr)
+		○ Hilbert Schmidt Independence Criterion (Hsic) kernel-based analogue to Dcorr that uses Gaussian median kernel (hyppo.independence.Hsic)
+			§ Kernels used instead of distances with the compute_kernel parameter
+		○ Multiscale graph correlation (MGC) uses the power of Dcorr and k-nearest neighbors to create independence test. (hyppo.independence.MGC)
+			§ Recently added source code to (scipy.stats.multiscale_graphcorr)
+			§ Has a feature of a (n,n) map (aka (n,k) where k is less than n if there are repeated values)
+				□ Ask TA to specify what it means when the test statistics shows all these different "scales"?
+				□ The optimal scale is an ordered pair that indicates nearest neighbors where the test statistic itself is maximized and marked with a red "X"
+				□ The heat map done gives insights into dependency between x and y
+				□ 
+		
+	- Random Forest Based Tests
+		○ These tests exploit the theoretical properties of decision tree based classifiers to create highly accurate tests (especially in high dimensional data sets)
+		○ Kernel mean embedding random forest (KMERF) uses similarity matrices as a result of random forest to generate a test statistic and p-value (hyppo.independence.KMERF)
+			§ No compute_distance, but uses number of trees which can be set explicitly
+			§ Because it's random-forest based some features that can be grabbed are: relative importances value of dimension
+				□ 
+				□ Feature importances decreases as dimension increases.
+	- Maximal Margin Correlation
+		○ Takes the independence tests in hyppo.independence and computes the maximal correlation of pairwise comparisons between dimensions x and y (hyppo.independence.MaxMargin)
+
+K-Sample Testing
+	- K-sample testing problem is a common issue consider these issues: (consider k groups of data where each group had a different treatment)
+		○ Are these groups similar to one another or statistically different? Suppose each group has a distribution, are these distributions equivalent to one another or is one of them different?
+		○ Assume random variables U1, U2 …. Uk with distributions F1, F2 …. Fk. A k-sample test is seeing whether these distributions are equivalent.
+			§ 
+	- Multivariate Analysis of Variance (MANOVA) and Hotelling
+		○ MANOVA is current standard for k-sample testing (hyppo.ksample.MANOVA)
+		○ Hotelling is 2-sample MANOVA (hyppo.ksampleHotelling)
+			§ Both tests aren't distance based
+	- K-sample Testing via Independence Testing
+		○ Reduces the k-sample testing problem to the independence resting problem
+			§ Creates a new concatenated inputs and a matrix that labels which concatenated data came from the input
+			§ Because independence tests have a high finite sample testing power, its advantageous in some cases (hyppo.ksample.Ksample)
+	- Distance (and Kernel Equivalences)
+		○ Energy is a powerful distance-based two sample test (hyppo.ksample.Energy)
+		○ Distance components (DISCO) is the k-sample analogue to Energy (hyppo.sample.DISCO)
+		○ Maximal mean discrepancy (MMD) is a powerful kernel-based two sample test (hyppo.ksample.MMD)
+		○ *Note Energy and Disco equate to hyppo.ksample.Ksample using indep_test="Dcorr"
+		○ *Note MMD equates to hyppo.ksample.Ksample using indep_test="Hsic"
+
+Time Series Testing
+	- A common problem is identifying causality within the time series data
+	- Cross multiscale graph correlation (MGCX) and cross distance correlation (DcorrX) 
+		○ Time series tests of independence 
+		○ Hyppo.time_series.MGCX and hyppo.time_series_DcorrX
+			§ Each class has a max_lag parameter that will indicate max number of lags to check between inputs of x and shifted y
+			§ 
+			§ A two sample test can be done in which Dx is sample discriminability of one approach while Dy is the discriminability of another
+			§
+			
+
+Discriminability Testing
+	- Used to see if repeated measures from the same subject are different than those from other subjects
+	- Dx is the sample discriminability of x and Do is the discriminability that would be observed under random chance
+	- Discriminability one-sample (hyppo.discrim.DiscrimOneSample) and Discriminability two-sample (hyppo.discrim.DiscrimTwoSample)
