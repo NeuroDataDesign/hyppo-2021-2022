@@ -1,0 +1,92 @@
+﻿Abstract
+* Two non-parametric statistical tests of GOF for conditional distributions
+* Tests formulated with a Stein operator → applied to any differentiable conditional density model
+* Tests are consistent against any fixed alternative conditional model
+* Statistics can be estimated easily, requiring no density estimation as a step
+* Second test offers an interpretable test result providing insight on where the conditional model doesn’t fit well in the covariate domain
+Introduction
+* Conditional distributions provide a versatile tool for capturing target variable vs. conditioning variable
+* Estimating a conditional density function from the observed data is the first crucial step
+* Not many works have investigated evaluating GOF of a given conditional density model
+* Hypothesis tests are common
+* Model does not specify the marginal distribution of the covariates → conditional goodness of fit
+* Conditional Kolmogorov test requires estimation of the CDF and can only be applied to data of low dimension
+* Zheng’s test involves density estimation as part of the test statistic, and consistency is only guaranteed with a decaying smooth bandwidth whose rate is challenging to control
+* Specifying conditional moment function is challenging for a complex model whose normalizing constant is intractable 
+* Kernel methods and Stein operators for model goodness of fit in the ML community
+* Marginal density model known as the Kernel Stein Discrepancy (KSD) test
+* Can consider KSD for checking the convergence of an MCMC procedure
+* KSD is only applicable to marginal (unconditional) density models
+* Kernel Conditional Stein Discrepancy (KCSD) generalizes the KSD to conditional GOF testing
+* KCSD test is consistent against any fixed alternative conditional model, for any C_0-universal positive definite kernels used
+* Finite Set Conditional Discrepancy extends the KCSD test to return test locations that indicate realizations of the covariate at which the conditional model doesn’t fit well
+* Interpretable indication of the conditional model fails as evidence for rejecting the null hypothesis
+Background
+* Kernel Stein Discrepancy
+   * The key to KSD is a Stein operator constructed such that the expectation under distribution P vanishes
+* Finite Set Stein Discrepancy (FSSD)
+   * FSSD is an extension of the original KSD aiming to construct a GOF test of an unconditional density model that runs in linear time and that offers an interpretable test result
+   * FSSD is the observation that KSD = 0 iff p = r
+   * FSSD evaluates the Stein witness function to check a departure
+Kernel Conditional Stein Discrepancy
+* Distinguishing two conditional probability density functions
+* p does not specify a marginal model for x
+* The proposed null hypothesis allows testing the GOF across a wide range of conditional density models
+* The underlying prediction function can be neural network or other arbitrarily nonlinear functions as long as its gradient is differentiable
+* Consider Y to be a continuous random vector, but tests can be extended to handle a discrete Y to allow testing
+* The formulated hypothesis in the current form allows testing a fixed conditional model and may appear restrictive in some cases → we don’t want to advocate for a particular null hypothesis
+* Formulation as a first step for more realistic null hypotheses 
+* Vector-valued reproducing kernels
+   * Require these for construction of new tests
+* Hypothesis testing with KCSD
+   * KCSD statistic (both population and estimator) depends on the model p only through its gradient which is independent of the normalizer p(x)
+   * KCSD doesn’t require the normalizer → big advantage
+      * Modern conditional models tend to be complex and their normalizers may not be tractable 
+   * In practice, the limiting distribution under H_0 is not available in closed form
+   * Approximate the test threshold by bootstrapping or estimating the eigenvalue which cost O(n^3) runtime
+   * Test threshold
+      * By bootstrapping, the test threshold can be estimated by computing the empirical (1 - alpha)-quantile of these bootstrapped samples 
+      * Overall computational cost of this bootstrap procedure is O(mn^2) → same cost as testing a marginal probability model in the KSD test
+The Finite Set Conditional Discrepancy
+* GOF test for the conditional density functions which gives an interpretable output to justify rejection of the null hypothesis
+* FSCD almost surely distinguishes two conditional probability density functions
+* Hypothesis testing with FCSD
+   * Show that the test statistic can be defined as a U-statistic
+   * The FCSD statistic is in fact a special case of the KCSD with the kernel k in (3) replaced with kbar_v
+* Optimizing test locations        
+   * FSCD can distinguish two conditional density functions with any V drawn from any probability density supported on X
+   * In practice, optimizing V will further increase the power of the test
+   * The power expression is dominated by the opower criterion
+* Split the data into two independent sets, training and test sets
+* Optimize the ratio with its consistent estimator estimated from the training set
+* The hypothesis test is performed on the test set using the optimized parameters
+* The data splitting scheme has been used in modern stat tests
+* Conducting a test on an independent test set avoids overfitting to the training set
+* False rejection rate of H_0 may be higher than the specified significance level alpha otherwise 
+* For the statistic to be a U-statistic, its U-statistic kernel must be independent of the samples used to estimate the summands
+* Finding V leads to a higher test power when the difference between p and r
+Experiments
+* Illustration of the FSCD power criterion
+  
+
+* Test power
+   * The median heuristic has been used to set the bandwidth in many existing kernel-based tests 
+   * Two variations of the FCSD
+      * FCSD-rand, the J test locations are randomly drawn from a Gaussian fitted to the data with maximum likelihood
+      * FSCD-opt, 30% of the observed data are used for optimizing the two bandwidths and the J test locations by maximizing the power criterion, and the rest of the 70% of the data are used for testing
+   * MMD
+      * Created for two-sample testing originally
+      * Splitting the data into two disjoint sets to adapt it to conditional GOF testing
+      * Data splitting performed to guarantee the independence between the two sets of samples
+      * Product of the Gaussian kernels with bandwidths chosen by median heuristics
+   * Zheng
+      * Test requires the best fitting parameter in order to determine the fit of a given parametric family
+      * In our model, the reference and the model distributions share the same parameter values, as the model family is a singleton in our setting
+* Linear Gaussian Model (LGM) anad Heteroscedastic Gaussian Model (HGM) are tested on the following problems
+* The model p is heteroscedastic where the variance function is created such that it is roughly 1 everywhere in the domain of x except in the region of c
+* Quadratic Gaussian Model (QGM)
+   * The conditional mean of the true distribution r is given by the quadratic function, whereas the model p is given by 
+   * Typical scenario where the model is too simplistic to model the data
+* Informative power criterion
+   * High power criterion (relatively poor fit)
+   * Low power criterion (relatively good fit)

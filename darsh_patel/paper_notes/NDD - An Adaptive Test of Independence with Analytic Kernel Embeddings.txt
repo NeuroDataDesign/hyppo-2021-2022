@@ -1,0 +1,68 @@
+﻿* New dependence measure and adaptive statistical test of independence are proposed
+* Dependence measure → difference between analytic embeddings of the joint distribution and the product of the marginals evaluated at a finite set of features 
+* Results in a test that is data efficient and runs in linear time 
+* Features are chosen to maximize the lower bound on the test power 
+* Optimized features are evidence to reject the null hypothesis, regions in the joint domain where the joint distribution and the product of the marginals differ the most
+* Independence tests using the optimized features perform comparably to the state of the art quadratic time HSIC test and outperform competing O(n) and O(nlogn) tests
+Introduction
+* Modern tests can address complex interactions -- for instance changes in variance of X with the value of Y
+   * Classical tests such as Pearson’s correlation and Kendall’s tau can detect monotonic relations between univariate variables
+* HSIC → basic nonlinear dependence measure → Hilbert-Schmidt norm of the covariance operator between feature mappings of random variables
+* When a particular smoothing function is used, the statistic corresponds to the covariance between distances of X and Y variable pairs 
+* The distance covariance is an instance of HSIC for an appropriate choice of kernels 
+* Disadvantage: require quadratic time to compute 
+* Key to several faster approaches is a more efficient computation of the statistic and its threshold under the null distribution 
+   * Computing HSIC on finite-dimensional feature mappings chosen as random Fourier features, a block-averaged statistic, and a Nystrom approx to the statistic
+   * Block statistic performs worse than both Nystrom and Fourier approaches → due to large variance of the statistic under the null
+* Computational cost of correlation measures is high despite convergence (O(n^3)), and test thresholds have relied on permutation 
+* Number of faster approaches have been suggested
+   * Statistics of the correlation between finite sets of basis functions, chose for instance to be step functions or low order B-splines (O(n))
+   * Canonical correlation between finite sets of basis functions chosen as random Fourier features; in addition to a Copula transform on the inputs → total cost of O(nlogn)
+   * Space partitioning approaches have also been proposed based on statistics such as the KL divergence → apply only to univariate variables or to multivariate variables of low dimension
+* HSIC on a finite set of features
+   * FSIC is an average of the covariances of analytic functions defined on each of X and Y
+   * An NFSIC yields a distribution-independent asymptotic test threshold 
+* Test is consistent despite a finite number of analytic features being used 
+* Task is to find correlated feature pairs on the respective marginal domains rather than attempting to find a single, high-dimensional feature representation on the tensor product of the marginals 
+Independence Criteria and Statistical Tests
+* FSIC → dependence can be measured in terms of the covariance between data features
+* NFSIC → simple asymptotic distribution P_xy = P_xP_y
+* HSIC between X and Y can be defined
+  
+
+* Propose new linear-time dependence measure, FSIC
+  
+
+* Normalized FSIC and Adaptive Test
+   * Consider a normalized variant of FSIC 
+   * Call it NFSIC
+   * Parameter tuning
+      * Let theta be the collection of all tuning parameters of the test
+      * Propose to set theta by maximizing the lower bound on the test power
+      * Divide the sample Z_n into two disjoint sets: training and test sets
+      * Splitting is to guarantee the independence of theta* and the test sample to avoid overfitting
+Experiments
+* Interested in challenging problems that require a large number of samples, where a quadratic-time test might be computationally infeasible
+* Test outperforms the quadratic-time test in some cases
+* Optimization of NFSIC-opt
+   * Complexity of the optimization procedure is still in linear time 
+   * FSIC, NyHFSIC, and RDC rely on a finite-dimensional kernel approximation
+   * The proposed NFSIC requires only n to go to infinity to achieve consistency
+* Toy problems
+   * Same Gaussian
+   * Sinusoid
+   * Gaussian sign
+   * NFSIC vs. QHSIC
+      * NFSIC outperforms the quadratic-time QHSIC in these two problems
+      * Pinpointing exact test locations by the optimization of NFSIC performs well
+      * Whether QHSIC or NFSIC is better depends heavily on the problem
+      * If the difference between p_xy and p_xp_y is large only in localized regions, then the proposed linear time statistic has an advantage
+      * If the difference is spatially diffuse, then QHSIC has an advantage
+      * No existing work has proposed a procedure to optimally tune kernel parameters for QHSIC → NFSIC has a clearly defined objective for parameter tuning
+* Real problems
+   * Million Song Data
+      * NFSIC-opt has the highest test power among all linear-time tests for all the sample sizes
+      * NFSIC-opt uses half of the sample for parameter tuning
+   * Videos and Captions
+      * QHSIC performs exceptionally well on this problem, achieving a maximum power throughout
+      * NFSIC-opt has the highest sample efficiency among the linear-time tests → showing the optimization procedure is also practical in high dimensional setting

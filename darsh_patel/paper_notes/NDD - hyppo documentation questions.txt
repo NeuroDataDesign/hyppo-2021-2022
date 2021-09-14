@@ -1,0 +1,63 @@
+﻿* Package for multivariate hypothesis testing
+* Hypothesis testing for high dimensional and nonlinear data is important
+* Independence testing, k-sample testing, time series independence testing
+* Tests are relegated to a single class, and all classes have a test method
+   * Returns a test statistic and a p-value as well as other informative outputs depending on the test
+* All functions and classes accept np.ndarray as inputs
+* Input data matrices have the shape (n, p) where n is the number of samples and p is the number of dimensions (features)
+* Following modules are included
+   * hyppo.independence
+   * hyppo.ksample
+   * hyppo.time_series
+   * hyppo.discrim
+   * hyppo.tools
+* Can use test multiscale graph correlation (MGC) to check the independence of two different random variables (passed as arrays)
+* Simulations
+   * Hyppo provides some sample data and ways to generate synthetic data through hyppo.tools 
+      * Independence sims 
+      * Gaussian sims 
+      * K-sample sims 
+      * Time-series sims
+* Independence testing
+   * Tests can be found within hyppo.independence
+   * Each method has a statistic and test method
+   * Test method is the one returns the test statistic and the p-values among other outputs
+   * Pearson’s Correlation Multivariate Variants 
+      * Canonical correlation (CCA)
+      * Rank value (RV)
+   * Distance (and Kernel) Based Tests
+      * Heller Heller Gorfine (HHG)
+      * Distance Correlation (Dcorr)
+      * Hilbert Schmidt Independence Criterion (Hsic)
+      * Multiscale graph correlation (MGC)
+   * Random Forest Based Tests 
+      * Kernel mean embedding random forest (KMERF)
+   * Maximal Margin Correlation
+      * hyppo.independence.MaxMargin
+* K-sample testing
+   * K groups of data where each group had a different treatment
+   * Are these groups similar to one another or statistically different?
+   * Are the distributions equivalent to each other or is one of them different?
+   * MANOVA and Hotelling
+   * Nonparametric MANOVA via Independence Testing
+   * Distance (and Kernel) Equivalencies 
+      * Energy
+      * Distance components (DISCO)
+      * Maximal mean discrepancy (MMD)
+* Time Series Testing
+   * Causality within time series data is hard to identify
+   * Cross multiscale graph correlation (MGCX) and cross distance correlation (DcorrX)
+* Discriminability Testing
+   * Repeated measures from the same subject, want to see if these are different than those from other subjects
+   * Discriminability one-sample and discriminability two sample are time series tests of independence
+* Some of the tests have been benchmarked between hyppo vs. similar packages in R and Python
+Questions
+* When examining the various methods for independence testing that are included in the library, how does one decide which one works best for a particular scenario?
+   * Is it more of a trial + error thing or do certain characteristics of the random variables / data whose independence we’re checking give a hint?
+   * MCG vs. CCA vs. RV vs. HHG vs. Dcorr vs. HSIC etc.
+* Where exactly would a goodness-of-fit test live in this library? What would integration look like with the remainder of the code that you’ve already written?
+* Is there a preference for GOF methodology? Should it be similar to the techniques presented in the linked papers, or is it up to our discretion as to what works best? → I’m leaning towards linear-time kernel GOF
+* What’s the next best alternative for tools for multivariate hypothesis testing? In Python, MATLAB, and R?
+* Is the vision for the functionality for the kernel GOF testing similar to how the other hypothesis testing modules in hyppo work?
+* What do you think are the top 2 or 3 things to keep in mind stylistically as I start looking into various kernel GOF implementations and trying to make them fit well into the hyppo library (noticed that there are a lot of comments, simplistic inputs for each function, etc.)?
+* Any other things I should keep in mind as I start examining the source code for kernel GOF testing?

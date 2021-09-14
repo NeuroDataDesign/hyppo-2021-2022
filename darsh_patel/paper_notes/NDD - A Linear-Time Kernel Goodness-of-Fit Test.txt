@@ -1,0 +1,76 @@
+﻿Abstract
+* Linear computational cost, scaling w/ the number of samples
+* Minimizing the false negative rate to choose the best test features (indicators of difference between observed and reference)
+* Stein’s method → not necessary to compute the normalizing constant 
+* Test has greater relative efficiency compared to a previous linear-time kernel test (analyzed the asymptotic Bahadur efficiency)
+* Performance exceeds that of the earlier linear-time test and matches or exceeds the power of a quadratic-time kernel test 
+* Goodness of fit performs better in high dimensions and where model structure can be exploited → based on Maximum Mean Discrepancy
+Intro
+* Goodness of fit is done to determine how well model density fits an observed sample from an unknown distribution
+* Hypothesis test → the null hypothesis is that p (model density) = q (unknown distribution), tested against the alternate hypothesis that p != q
+* Space partitioning works poorly in high dimensions → can alternatively conduct a two-sample test using samples from both p and q
+* Test statistic → norm of the smoothness-constrained function with largest expectation under q → Kernel Stein Discrepancy (KSD)
+* Minimum variance unbiased estimate of the KSD is a U-statistic
+* Replace the U-stat with a running average with a linear cost to reduce cost of testing 
+   * Results in increased variance 
+   * Corresponding decrease in test power 
+* Construct explicit features of distributions instead
+* Features have been constructed recently to explicitly maximize test power in two-sample and independence test settings
+* Authors’ test has greater asymptotic Bahadur efficiency relative to the linear time test of [22] for Gaussian distributions under the mean shift alternative 
+*  New linear-time is able to detect subtle local differences between the density p(x) and the unknown q(x) as observed through samples
+KSD Tests
+* Expectation as a function of Stein operator T_p = 0 iff q = p
+   * Expectation can be used as a statistic for testing goodness of fit
+* Stein witness test will play a crucial role in the new test statistic in Section 3
+* For the goodness of fit test, rejection threshold can be computed by a bootstrap procedure 
+   * Can be computed even if p is only known up to a normalization constant
+* Linear-Time Kernel Stein Test (LKS)
+   * Computation of KSD statistic (S^2-hat) costs O(n^2)
+   * Linear-time estimator performs much worse (in terms of test power) than the quadratic-time U-statistic estimator 
+New Statistic: The Finite Set Stein Discrepancy
+* KSD test is powerful, but has a high computational cost
+* Decrease in test power outweighs the computational gain from the LKS test
+* Want a linear time test with comparable power to the KSD test
+* Linear test statistic of [22, 9] is given by the degree of flatness of g (function witnessing the difference between p and q)
+* Want to use a different measurement of flatness of g that can be computed in linear time 
+* Use a real analytic kernel k that makes g_1, …, g_d real analytic
+  
+
+* Consider only the Gaussian kernel and assume all conditions stated in Thm 1
+* If the FSSD be employed somewhere other than testing, to obtain pseudo samples converging to p, then stronger conditions may be needed 
+
+
+* Goodness of fit test with FSSD statistic
+   * Construct test so that null hypothesis is rejected when FSSD > T_alpha (rejection threshold / critical value)
+   * A consistent, unbiased estimator of FSSD is
+  
+
+* U-statistic, so asymptotic distribution is easily derived
+  
+
+  
+
+* Theorem 1 → population quantity FSSD^2 = 0 iff p = q for any choice drawn from a distribution with a density
+* Approximate estimate for test power when n is large
+  
+
+
+
+* Relative efficiency and Bahadur Slope
+   * LKS and FSSD test have the same computational cost of O(d^2*n)
+   * Both achieve maximum power of 1 as n → infinity under H_1
+   * Need to understand which test is more sensitive to detecting differences between p and q
+   * Identified by the Bahadur slope of the test → compute the Bahadur efficiency
+  
+
+* Given by the ratio of the slopes of the two tests
+* Absolute Bahadur Slope (ABS) → the higher the slope, the faster the p-value vanishes, and thus the lower the sample size required to reject H_0 under theta_A
+  
+
+* Theorem 7 guarantees that the FSSD test is asymptotically at least twice as efficient as the LKS test in the Bahadur sense
+
+
+Experiments
+* Sensitivity to local differences → The test power objective FSSD^2/sigma captures local differences of p and q 
+* The proposed linear-time FSSD-opt has a comparable or higher test power in some cases than the quadratic time KSD test
+* O(n) run time is advantageous when the problem is much harder to tackle, requiring larger sample sizes
