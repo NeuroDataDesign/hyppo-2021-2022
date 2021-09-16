@@ -20,26 +20,28 @@ Consequence of alts: lose distribution-free property of univariate test, but exp
 3) All Sample Points = Center Points -> pooling
 
 **Tests to use** - desirable tests are distribution-free and have known asymptotic null distribution
+
 **Univariate tests **
 1) KS
 2) Anderson-Darling (AD)
 3) minP = generalized test that aggregates over all partition sizes using min p-value setting (described more in supplemental material)
+
 **Multiple Comparison Tests**
 1) Bonferroni
 2) Hommel
 
 **Paper Author Recommendations:** 
-At least one centre point randomly sampled from a distribution with a support of positive measure
-Want to avoid picking a centre point that converges to a bad point
-Adding Gaussian error to the measured signals guarantees that the results from fast HHG hold for any normed distance.
-Without Gaussian, results shown to hold in Euclidean norm.
+- At least one centre point randomly sampled from a distribution with a support of positive measure
+- Want to avoid picking a centre point that converges to a bad point
+- Adding Gaussian error to the measured signals guarantees that the results from fast HHG hold for any normed distance.
+- Without Gaussian, results shown to hold in Euclidean norm.
 
 **Notable Experimental Results:**
-Benefit in considering all sample points as center vs single center point
-Between Hommel and Bonferroni, latter was found to have better power in most scenarios
-Between univariate tests, AD and minP are found to be more powerful than KS, with minP gaining more in many-clustered data
-If the univariate test-statistic is a U-statistic of order m, then aggregating by summation with the sample points as center points produces a multivariate test-statistic which is a U-statistic of order m + 1.
-Useful in working out asymptotic null distribution of multivariate test-statistic or identify non-null distribution of test-statistic
+- Benefit in considering all sample points as center vs single center point
+- Between Hommel and Bonferroni, latter was found to have better power in most scenarios
+- Between univariate tests, AD and minP are found to be more powerful than KS, with minP gaining more in many-clustered data
+- If the univariate test-statistic is a U-statistic of order m, then aggregating by summation with the sample points as center points produces a multivariate test-statistic which is a U-statistic of order m + 1.
+- Useful in working out asymptotic null distribution of multivariate test-statistic or identify non-null distribution of test-statistic
 
 **SUPPLEMENTAL MATERIALS**
 
