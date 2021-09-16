@@ -1,1 +1,81 @@
+Multivariate Applicaions of Wald-Wolfowitz Runs Test
+
+Notes:
+
+Straightforward adaptation of Smirnov maximum deviation test allows for construction of consistent and distribution free multivariate tests
+No such extension for Wald-Wolfowitz have previously been proposed
+Difficulty stems from notion of a sorted list not easily generalized
+Proposes usage of minimal spanning tree (MST) of sample points as multivariate generalization of univariate sorted list
+
+Univariate Wald-Wolfowitz:
+
+Essentially, sorts univariate observations from samples of 2 distributions and assigns label X or Y depending on origin of observation
+Works by counting number of “runs” (consecutive sequence of identical labels)
+Reject H0 for small values of R (count of runs)
+Null distribution is standard normal and test is consistent as long as ratio of sample sizes remains bounded away from 0, inf as both m, n -> inf
+
+Smirnov Test:
+
+Similarly sorts univariate observations in ascending order
+Quantity di = ri/m - si/n is calculated where ri(si) is # of X(Y) observations in which rank in sorted list is less than or equal to i.
+Test statistic D = max|di|
+H0 rejected for large values of D
+
+Minimal Spanning Trees:
+
+MST of an edge weighted graph is a spanning tree for which the sum of edge weights is a minimum
+Two important properties
+Connect all nodes with N - 1 edges
+Node pairs defining edges represent points that tend to be closer together
+
+Multivariate Number of Runs Test:
+
+For application to Wald-Wolfowitz in univariate setting
+Construct MST of pooled sample
+Remove edges for which defining nodes originate from diff samples
+Define test stat R as number of disjoint subtrees that result
+Multivariate generalization
+MST of multivariate pooled sample is constructed
+Same process follows
+Essentially, test can be viewed as rejection the null when “closeness” is too strongly correlated with sample identity
+
+Multivariate Maximum Deviation (Smirnov) Test:
+
+Graph theory concepts
+Eccentricity of a node is number of edges in path of greatest length beginning with node in question
+Other end known as antipode of that node
+Path between these 2 points is known as diameter
+Center node is node for which eccentricity is minimum
+Rooted tree has one node designated as a root, each node of a rooted tree has depth
+Height is maximum depth of any node in tree
+We begin by rooting MST at node with highest eccentricity
+Nodes ranked in order they are visited in height directed preorder (HDP) traversal of the tree
+Visit the root
+HDP traverse in ascending order of height the subtrees rooted at the daughters of the root
+
+In summary, simulations show that maximum deviation tests have higher power for low dimensions (p<5) while runs test dominates for higher dimensions
+
+Runs test and Smirnov test expect more power against general alternatives, while radial Smirnov and 2x2 tests sacrifice generality to have increased power against scale alternatives. Additionally, Smirnov is more effective for lower dimensions while runs and 2x2 more sensitive in higher dimensions
+
+
+A Test to Determine the Multivariate Normality of a Data Set
+
+Notes
+
+Use of assumption of multivariate normality is common, however few tests exist to prove this assumption to be valid
+Tests that exist fall into 3 main categories
+tests of marginal normality
+tests for joint normality
+tests based on one-dimensional projections
+Friedman-Rafsky test exists as a multivariate extension, testing to determine if 2 multivariate distributions follow the same distribution
+Shown to be highly effective for sample sets sufficiently large (roughly 200 points or greater)
+Can be modified to test whether a given sample follows the normal distribution
+Comparing sample to a known multivariate normal sample
+One sided test is most appropriate for detecting deviations from normality
+Practical implementation demands a number of test instances be carried out to avoid bias when selecting samples
+Can be carried out through a monte carlo simulation to generate further points following standard normal
+Conclusions
+Friedman-Rafsky test can be used to detect deviations from normality
+Test can be conservatively applied using asymptotic normality of test statistic
+Power of test is reasonable, especially so at much higher dimensions
 
