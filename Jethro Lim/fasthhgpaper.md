@@ -9,7 +9,9 @@
 - Suggested Method: apply a multiple comparison test that tests the global null hypothesis that all M null hypotheses are true
 
 **Pooling Alternatives:** 1) Pooling of p-values 2) Pooling of test-statistics
+
 Both alternativess then tested by permutation tests
+
 Consequence of alts: lose distribution-free property of univariate test, but expect more power
 
 **Choice of Center Point(s)** - possibly set in code with three settings shown in paper:
