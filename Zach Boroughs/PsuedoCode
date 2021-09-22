@@ -1,4 +1,5 @@
 PsuedoCode for adaptation of existing package in R, namely WWtest in the package GSAR
+https://rdrr.io/bioc/GSAR/src/R/WWtest.R
 
 WWtest function(data, labels, numer of permutations, pvalue.only) - matrix, array, int, boolean
 
