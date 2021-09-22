@@ -79,3 +79,42 @@ Friedman-Rafsky test can be used to detect deviations from normality
 Test can be conservatively applied using asymptotic normality of test statistic
 Power of test is reasonable, especially so at much higher dimensions
 
+
+Fast euclidean minimum spanning tree: algorithm, analysis, and applications
+
+Notes
+
+Given a set of points S in R^d, goal is to find lowest weight spanning tree on S with edge weights given by Euclidean distance
+MST is useful for many practical data anlysis problems (optimization, clustering, gene expression, netweork connectivity, modeling of flow, etc)
+Computational bottleneck is finding the nearest neighbor of components in a spanning forest
+Propose using EMST to compute hierarchical clusterings
+  Deleting all edges longer than a specified cutoff
+  Varying cutoff value results in hierarchical clustering (single linkage clustering)
+Adaptive analysis proposes improving results by considering properties of inputs in analysis to bound runtimes
+New Euclidean Minimum Spanning Tree Algorithm Proposed (DUALTREEBORUVKA)
+  Overcomes bottleneck of most MST algorithms
+Boruvka's algorithm
+  Adds minimum weight edge between any two components of forest at each step, requiring N-1 steps in total
+General MST Alogrithms
+  Insufficient for large, metric problems as they depend linearly on the number of edges
+Eculidean MST Algorithms
+  Uses Voronoi diagram to find edges and solve bichromatic closest pair problem to determine asymptotic min runtime
+WSPD-based Methods
+  Nodes containing neighboring points individually analyzed to determine lowest weighted edges
+Properties of Data
+  Expansion Constant - bounds maximum increase in density of points as a function of the distance from any point (lacks higher dimensional structure of MST)
+  Boruvka Clustering - Define hierarchical clustering of the data
+  Cluster Expansion Constant - Essentially describes min area with which we can reasonably enclose all components of a cluster
+  Linkage Expansion Constant - Smallest area that can enclose all components of 2 neighboring clusters
+In some cases, identifying any one property can be difficult. Hence the usage of all constants to balance out and perform when one is difficult to determine
+Dual Tree Method creates central node and simultaneously 'prunes' all such edges far and heavily weighted
+In the kd-tree version of DualTreeBoruvka, each nodeQ maintains an upper bound d(Q) = maxq∈Q d(Cq) and records whether all the points belong to the same component of the spanning forest. A node where all points belong to the
+same component is referred to as fully connected. With these records, we can prune when the distance between the query and reference is larger than d(Q) or when all the points in
+Q and R belong to the same component.
+Essentially, new algorithm is not limited by dimension of the input and is considerably faster on large datasets that existing methods
+
+
+
+
+
+
