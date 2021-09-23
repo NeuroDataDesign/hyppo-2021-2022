@@ -33,3 +33,20 @@ of cognition and emotion function in as short a time as possible,
 including working memory, response inhibition, anticipation and
 receipt of rewards and losses, face processing (both neutral and
 emotional), and subsequent memory. 
+
+## Assessment domains
+
+The ABCD Study assessments can be loosely grouped into seven
+domains: substance use, mental health, physical health and
+biospecimens, neurocognition, gender identity and sexual health,
+culture and environment, and brain imaging. Each domain was
+designed to use instruments with documented reliability and
+validity, be developmentally sensitive, engage the most appropriate informant depending on the developmental stage and domain (e.g., parent versus youth), minimize participant burden,
+and be informed by previous relevant literature on both healthy
+and disordered brain and behavioral development. Furthermore,
+the inclusion of multiple informants for certain measures,
+including obtaining information from youth, caregivers, and
+teachers regarding youth mental health at baseline (youth =
+9–10-years-old), helps to mitigate potential unreliability of youth
+reports due to variability in language skills and retrospective
+reporting problems. 
