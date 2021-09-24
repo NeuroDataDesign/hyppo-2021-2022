@@ -1,0 +1,65 @@
+PsuedoCode for adaptation of existing package in R, namely WWtest in the package GSAR
+https://rdrr.io/bioc/GSAR/src/R/WWtest.R
+
+WWtest function(data, labels, numer of permutations, pvalue.only) - matrix, array, int, boolean
+
+  tests to ensure parameters values are of proper type
+  
+  matrix = matrix.append(boolean determining whether data column has label 0 (False) or label 1 (True))
+  
+  num1 = sum all array such that array = 1
+  
+  new_mat = transpose existing matrix
+  
+  W_mat = matrix of Euclidean distances between the points of new_mat
+  
+  gr = Create graph of distance matrix W_mat
+  
+  Set points of class 0 to red and points of class 1 to green
+  
+  MST = calculate mst from the graph in question
+  
+  domain = vertices of MST
+  
+  runs = empty array containing 0's for every val from 1 to number of permutations
+  
+  for iteration in 1 to number of permutations
+    
+    rand_perm = sample from domain without replacement (essentially randomizes order of vertices)
+    
+    mst2 = MST (define MST within scope of loop to avoid changing global variable)
+    
+    Set labels of vertices of mst2 to random_perm
+    
+    MST_weighted_matrix = lower adjacency matrix of mst2
+    
+    edge_indecies = boolean array such that TRUE when wst_weighted_matrix is not zero
+    
+    runs[iteration] = 1 + sum such that two neighboring points do not have the same label
+    
+  end for
+  
+  sd_runs = calculate standard deviation over the rows of runs
+  
+  W_perm = demeaned and normalized data of runs
+  
+  mst_weighted_matrix = lower adjacency matrix of original MST
+  
+  edge_indecies = boolean array such that TRUE when mst_weighted_matrix is not zero
+    
+  runs_observation = 1 + sum such that two neighboring points do not have the same label
+  
+  W_obs = demeaned and normalized data for runs_obs according to mean and sd of runs
+  
+  p_value = calculate p_value for the test
+  
+  if pvalue.only, return only pvalue
+  
+  else, return all statistic(W_obs), perm.stat(W_perm), and pvalue(p_value)
+  
+end function
+    
+    
+  
+  
+  
