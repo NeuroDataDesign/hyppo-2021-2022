@@ -7,4 +7,6 @@
  Orthogonality in case of partial distance covariance and partial distance correlation means independence, but when we compute the orthogonal projection of a random variable onto the condition variable, 
  the "remainder" in the difference is typically not independent of  the condition.
  
- ## not finished need to ask some queestions 
+## Population pdCor
+![image](https://user-images.githubusercontent.com/89371970/134946291-6e977321-d2b0-4519-b004-1f92cca85be1.png)
+
