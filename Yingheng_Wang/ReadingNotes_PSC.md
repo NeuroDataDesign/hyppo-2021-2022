@@ -18,7 +18,7 @@ At the population level, to quantify variations in the diffusion connectomes and
 are roughly *three broad analytical methods: (i) standard region-based
 analysis; (ii) voxel-based analysis, and (iii) tract-specific analysis.* 
 
-**The region-based method** often parcellates the brain into regions of interest (ROIs) that have anatomical meaning and studies the statistical properties of each region. Although it is
+**The region-based method** often parcellates the brain into regions of interest (ROIs) that have anatomical meaning and studies the statistical properties of each region. Although it is
 convenient to focus on specific regions, it suffers from the difficulty in
 identifying meaningful regions in WM, particularly among the long
 curved structures common in fiber tracts.
