@@ -43,6 +43,23 @@ graph analysis may be applied. However, the use of ***such a binary connectivity
 
 ### Strength of PSC
 
-PSC can utilize the geometric information of
-streamlines, including shape, size and location, for a better
-parcellation-based connectome analysis. 
+PSC can utilize the geometric information of streamlines, including shape, size and location, for a better parcellation-based connectome analysis. 
+
+(1) Most current techniques transform the full brain tractogram into a
+simplified adjacency matrix for groupwise network analysis. In
+contrast, the proposed PSC pipeline preserves the geometric information, which is crucial for quantifying brain connectivity and understanding its variation across subjects. The PSC constructs structural connectomes across three different levels, from simple to complex, including the binary network, the weighted networks and
+the streamline-based connectome. Such a multi-level representation
+allows to perform brain network analysis at different levels of detail,
+inspect the brain connectome from different perspectives, and validate findings in the space of WM bundles.
+
+(2)  One of its objectives is to increase the robustness and reproducibility
+of reconstructed structural connectomes. A test-retest dataset is used
+to select tuning parameters in the PSC to optimize its reproducibility
+and preserve useful information in the connectome maps.
+
+(3) It uses a nonlinear spatial normalization method to decompose the
+variation of WM tracts into different components. More specifically,
+the shape component is separated from its confounding variables for
+the analysis of the shapes of tracts. Such a decomposition minimizes
+the variability across individual streamlines, while allowing us to
+efficiently compress streamlines in each connection.
