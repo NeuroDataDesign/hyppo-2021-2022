@@ -161,11 +161,7 @@ class FSSD(GofTest):
         unscaled_mean = FSSD.ustat_h1_mean_variance(Xi, return_variance=False)
         stat = n*unscaled_mean
 
-        #print 'Xi: {0}'.format(Xi)
-        #print 'Tau: {0}'.format(Tau)
-        #print 't1: {0}'.format(t1)
-        #print 't2: {0}'.format(t2)
-        #print 'stat: {0}'.format(stat)
+
         if return_feature_tensor:
             return stat, Xi
         else:
