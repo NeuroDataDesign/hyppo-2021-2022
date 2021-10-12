@@ -439,7 +439,44 @@ class FSSD(GofTest):
             seed = seed)
         return sim_fssds, eigs
     
-    
+    @staticmethod
+    def simulate_null_dist(eigs, J, n_simulate=2000, seed=7):
+        """
+        Simulate the null distribution using the spectrums of the covariance
+        matrix of the U-statistic. The simulated statistic is n*FSSD^2 where
+        FSSD is an unbiased estimator.
+
+        - eigs: a numpy array of estimated eigenvalues of the covariance 
+        matrix. eigs is of length d*J, where d is the inoput dimension, and
+        - J: the number of test locations
+
+        Return a numpy array of simulated statistics.
+        """
+
+        d = old_div(len(eigs),J)
+        assert d>0
+       
+        block_size = max(20, int(old_div(1000.0,(d*J))))
+        fssds = np.zeros(n_simulate)
+        from_ind = 0
+        with util.NumpySeedContext(seed=seed):
+            while from_ind < n_simulate:
+                to_draw = min(block_size, n_simulate-from_ind)
+                
+                chi2 = np.random.randn(d*J, to_draw)**2
+
+                sim_fssds = eigs.dot(chi2-1.0)
+
+                end_ind = from_ind+to_draw
+                fssds[from_ind:end_ind] = sim_fssds
+                from_ind = end_ind
+        return fssds
+
+    @staticmethod
+    def fssd_grid_search_kernel(p, dat, test_locs, list_kernel):
+        """
+        
+        """
 
     # end of FSSD
     #----------------------------------------------------------------------
