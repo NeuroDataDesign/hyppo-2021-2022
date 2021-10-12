@@ -96,6 +96,45 @@ class H0Simulator(with_metaclass(ABCMeta, object)):
 
 class FSSDH0SimCovObs(H0Simulator):
     """
+    An asymptotic null distribution simulator for FSSD.  Simulate from the
+    asymptotic null distribution given by the weighted sum of chi-squares. The
+    eigenvalues (weights) are computed from the covarince matrix wrt. the
+    observed sample. 
+    This is not the correct null distribution; but has the correct asymptotic
+    types-1 error at alpha.
+    """
+    def __init__(self, n_simulate=3000, seed=10):
+        super(FSSDH0SimCovObs, self).__init__(n_simulate, seed)
+
+    def simulate(self, gof, dat, fea_tensor=None):
+        """
+        fea_tensor: n x d x J feature matrix
+        """
+        assert isinstance(gof, FSSD)
+        n_simulate = self.n_simulate
+        seed = self.seed
+        if fea_tensor is None:
+            _, fea_tensor = gof.compute_stat(dat, return_feature_tensor=True)
+
+        J = fea_tensor.shape[2]
+        X = dat.data()
+        n = X.shape[0]
+       
+        Tau = fea_tensor.reshape(n, -1)
+        
+        cov = np.cov(Tau.T) + np.zeros((1, 1))
+        
+
+        arr_nfssd, eigs = FSSD.list_simulate_spectral(cov, J, n_simulate,
+                seed=self.seed)
+        return {'sim_stats': arr_nfssd}
+
+# end of FSSDH0SimCovObs
+#-----------------------------------------------------------------------
+
+class FSSDH0SimCovDraw(H0Simulator):
+   
+    """
     Asymptotic null distribution simulator for FSSD. Simulate from the
     asymptotic null distribution given by the weighted sum of chi-squares. The
     eigenvalues // weights are computed from the covariance matrix wrt the
@@ -111,6 +150,14 @@ class FSSDH0SimCovObs(H0Simulator):
 
         super(FSSDH0SimCovDraw, self).__init__(n_simulate, seed)
         self.n_draw = n_draw
+
+    def get_datasource(self):
+        """
+        Return a DataSource that allows sampling from this density.
+        May return None if no DataSource is implemented.
+        Implementation of this method is not enforced in the subclasses.
+        """
+        return None
 
     def simulate(self, gof, dat, fea_tensor=None):
         """
@@ -141,16 +188,6 @@ class FSSDH0SimCovObs(H0Simulator):
         ra_nfssd, eigs = FSSD.list_simulate_spectral(cov, J, n_simulate,
                 seed=self.seed)
         return {'sim_stats': ra_nfssd}
-        
-# end of FSSDH0SimCovObs
-#-----------------------------------------------------------------------
-
-class FSSDH0SimCovDraw(H0Simulator):
-    """
-    Asymptotic null distribution simulator for FSSD. The eigenvalues are computed from
-    the covariance matrix wrt. the sample drawn from p (the density to test against)
-    """
-    x = 3
 
 # end of FSSDH0SimCovDraw
 #-----------------------------------------------------------------------
@@ -383,6 +420,26 @@ class FSSD(GofTest):
         mu = np.mean(Tau, 0)
         variance = 4*np.mean(np.dot(Tau, mu)**2) - 4*np.sum(mu**2)**2
         return stat, variance
+
+    @staticmethod
+    def list_simulate_spectral(cov, J, n_simulate=1000, seed=82):
+        """
+        Simulate the null distribution using the spectrums of the covariance
+        matrix. This is intended to be used to approximate the null distribution.
+
+        Return (a numpy array of simulated n*FSSD valuesm, eigenvalues of cov)
+        """
+
+        # eigen decompose
+        eigs, _ = np.linalg.eig(cov)
+        eigs = np.real(eigs)
+
+        eigs = -np.sort(-eigs)
+        sim_fssds = FSSD.simulate_null_dist(eigs, J, n_simulate = n_simulate,
+            seed = seed)
+        return sim_fssds, eigs
+    
+    
 
     # end of FSSD
     #----------------------------------------------------------------------
