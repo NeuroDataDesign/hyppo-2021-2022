@@ -64,16 +64,70 @@ class GofTest(with_metaclass(ABCMeta, object)):
 #-----------------------------------------------------------------------
 
 class H0Simulator(with_metaclass(ABCMeta, object)):
-    # Simulator to draw samples from the null distribution
-    x = 3
+    """
+    Simulator to draw samples from the null distribution. 
+    For some tests, these are needed to conduct the test
+    """
+    def __init__(self, n_simulate, seed):
+        """
+        n_simulate: The nu,mber of times to simulate from the null distribution.
+            Must be a positive integer.
+            seed: a random seed
+        """
+        assert n_simulate > 0
+        self.n_simulate = n_simulate
+        self.seed = seed
+    
+    @abstractmethod
+    def simulate(self, gof, dat):
+        """
+        gof: a GofTest
+        dat: a Data (observed data)
+
+        Simulate from the null distribution and return a dictionary.
+        One of the item is 
+            sim_stats: a numpy array of stats
+        """
+
+        raise NotImplementedError()
 
 # end of H0Simulator
 #-----------------------------------------------------------------------
 
 class FSSDH0SimCovObs(H0Simulator):
-    # Asymptotic null distribution simulator for FSSD
-    x = 3
+    """
+    Asymptotic null distribution simulator for FSSD. Simulate from the
+    asymptotic null distribution given by the weighted sum of chi-squares. The
+    eigenvalues // weights are computed from the covariance matrix wrt the
+    sample drawn from p // the density to test against.
 
+    - The UnnormalizedDensity p is required to implement the get_datasource() method
+    """ 
+
+    def __init__(self, n_draw=2000, n_simulate=3000, seed=10):
+        """
+        n_draw: number of samples to draw from UnnormalizedDensity p
+        """
+
+        super(FSSDH0SimCovDraw, self).__init__(n_simulate, seed)
+        self.n_draw = n_draw
+
+    def simulate(self, gof, dat, fea_tensor=None):
+        """
+        fea_tensor: n x d x J feature matrix
+
+        This method does not use dat.
+        """
+
+        dat = None
+        p = gof.p
+        ds = p.get_datasource()
+
+        if ds is None:
+            raise ValueError('DataSource associated with p must be available.')
+        Xdraw = ds.sample(n=self.n_draw, seed=self.seed)
+
+        _, fea_tensor = gof.compute_stat(Xdraw, return_feature_tensor=True)
 # end of FSSDH0SimCovObs
 #-----------------------------------------------------------------------
 
