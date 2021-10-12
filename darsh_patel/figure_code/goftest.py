@@ -459,6 +459,7 @@ class FSSD(GofTest):
         block_size = max(20, int(old_div(1000.0,(d*J))))
         fssds = np.zeros(n_simulate)
         from_ind = 0
+
         with util.NumpySeedContext(seed=seed):
             while from_ind < n_simulate:
                 to_draw = min(block_size, n_simulate-from_ind)
@@ -470,13 +471,34 @@ class FSSD(GofTest):
                 end_ind = from_ind+to_draw
                 fssds[from_ind:end_ind] = sim_fssds
                 from_ind = end_ind
+
         return fssds
 
     @staticmethod
     def fssd_grid_search_kernel(p, dat, test_locs, list_kernel):
         """
-        
+        Linear search for the best kernel in the list that maximizes
+        the test power criterion, fixing the test locations to V.
+
+        - p: UnnormalizedDensity
+        - dat: a Data object
+        - list_kernel: list of kernel candidates
+
+        return: (best kernel index, array of test power criteria)
         """
+
+        V = test_locs
+        X = dat.data()
+        n_cand = len(list_kernel)
+        objs = np.zeros(n_cand)
+
+        for i in range(n_cand):
+            k_i = list_kernel[i]
+            objs[i] = FSSD.power_criterion(p, dat, k_i, test_locs)
+            logging.info('(%d), obj: %5.4g, k: %s' %(i, objs[i], str(k_i)))
+
+            besti = objs.argmax()
+            return besti, objs
 
     # end of FSSD
     #----------------------------------------------------------------------
