@@ -128,6 +128,20 @@ class FSSDH0SimCovObs(H0Simulator):
         Xdraw = ds.sample(n=self.n_draw, seed=self.seed)
 
         _, fea_tensor = gof.compute_stat(Xdraw, return_feature_tensor=True)
+
+        X = Xdraw.data()
+        J = fea_tensor.shape[2]
+        n = self.n_draw
+
+        Tau = fea_tensor.reshape(n, -1)
+
+        cov = old_div(Tau.T.dot(Tau), n) + np.zeros((1, 1))
+        n_simulate = self.n_simulate
+
+        ra_nfssd, eigs = FSSD.list_simulate_spectral(cov, J, n_simulate,
+                seed=self.seed)
+        return {'sim_stats': ra_nfssd}
+        
 # end of FSSDH0SimCovObs
 #-----------------------------------------------------------------------
 
