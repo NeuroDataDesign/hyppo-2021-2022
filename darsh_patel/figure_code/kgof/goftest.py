@@ -115,7 +115,7 @@ class FSSDH0SimCovObs(H0Simulator):
             _, fea_tensor = gof.compute_stat(dat, return_feature_tensor=True)
 
         J = fea_tensor.shape[2]
-        X = dat.data()
+        X = dat
         n = X.shape[0]
        
         Tau = fea_tensor.reshape(n, -1)
@@ -174,7 +174,7 @@ class FSSDH0SimCovDraw(H0Simulator):
 
         _, fea_tensor = gof.compute_stat(Xdraw, return_feature_tensor=True)
 
-        X = Xdraw.data()
+        X = Xdraw
         J = fea_tensor.shape[2]
         n = self.n_draw
 
@@ -233,7 +233,7 @@ class FSSD(GofTest):
         alpha = self.alpha
         null_sim = self.null_sim
         n_simulate = null_sim.n_simulate
-        X = dat.data()
+        X = dat
         n = X.shape[0]
         J = self.V.shape[0]
 
@@ -255,7 +255,7 @@ class FSSD(GofTest):
         """
         The statistic is n*FSSD^2.
         """
-        X = dat.data()
+        X = dat
         n = X.shape[0]
 
         # n x d x J
@@ -274,7 +274,7 @@ class FSSD(GofTest):
         Return the mean and variance under H1 of the test statistic (divided by
         n).
         """
-        X = dat.data()
+        X = dat
         Xi = self.feature_tensor(X)
         mean, variance = FSSD.ustat_h1_mean_variance(Xi, return_variance=True)
         return mean, variance
@@ -364,7 +364,7 @@ class FSSD(GofTest):
             the objective will be -1/(n**0.5*sigma_H1) + n**0.5 FSSD^2/sigma_H1, 
             which ignores the test threshold in the first term.
         """
-        X = dat.data()
+        X = dat
         n = X.shape[0]
         V = test_locs
         fssd = FSSD(p, k, V, null_sim=None)
@@ -485,7 +485,7 @@ class FSSD(GofTest):
         """
 
         V = test_locs
-        X = dat.data()
+        X = dat
         n_cand = len(list_kernel)
         objs = np.zeros(n_cand)
 
