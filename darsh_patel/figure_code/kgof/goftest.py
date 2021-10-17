@@ -16,9 +16,11 @@ __author__ = 'patel'
 from abc import ABCMeta, abstractmethod
 import autograd
 import autograd.numpy as np
+import util
 from util import NumpySeedContext
 from kernel import KGauss
 import logging
+from time import timer
 import matplotlib.pyplot as plt
 
 import scipy
