@@ -16,9 +16,7 @@ __author__ = 'patel'
 from abc import ABCMeta, abstractmethod
 import autograd
 import autograd.numpy as np
-# import kgof.data as data
-# import kgof.util as util
-# import kgof.kernel as kernel
+from util import NumpySeedContext
 import logging
 import matplotlib.pyplot as plt
 
@@ -231,24 +229,23 @@ class FSSD(GofTest):
         """
         dat: an instance of Data
         """
-        with util.ContextTimer() as t:
-            alpha = self.alpha
-            null_sim = self.null_sim
-            n_simulate = null_sim.n_simulate
-            X = dat.data()
-            n = X.shape[0]
-            J = self.V.shape[0]
+        
+        alpha = self.alpha
+        null_sim = self.null_sim
+        n_simulate = null_sim.n_simulate
+        X = dat.data()
+        n = X.shape[0]
+        J = self.V.shape[0]
 
-            nfssd, fea_tensor = self.compute_stat(dat, return_feature_tensor=True)
-            sim_results = null_sim.simulate(self, dat, fea_tensor)
-            arr_nfssd = sim_results['sim_stats']
+        nfssd, fea_tensor = self.compute_stat(dat, return_feature_tensor=True)
+        sim_results = null_sim.simulate(self, dat, fea_tensor)
+        arr_nfssd = sim_results['sim_stats']
 
-            # approximate p-value with the permutations 
-            pvalue = np.mean(arr_nfssd > nfssd)
+        # approximate p-value with the permutations 
+        pvalue = np.mean(arr_nfssd > nfssd)
 
         results = {'alpha': self.alpha, 'pvalue': pvalue, 'test_stat': nfssd,
-                'h0_rejected': pvalue < alpha, 'n_simulate': n_simulate,
-                'time_secs': t.secs, 
+                'h0_rejected': pvalue < alpha, 'n_simulate': n_simulate
                 }
         if return_simulated_stats:
             results['sim_stats'] = arr_nfssd
@@ -460,7 +457,7 @@ class FSSD(GofTest):
         fssds = np.zeros(n_simulate)
         from_ind = 0
 
-        with util.NumpySeedContext(seed=seed):
+        with NumpySeedContext(seed=seed):
             while from_ind < n_simulate:
                 to_draw = min(block_size, n_simulate-from_ind)
                 
