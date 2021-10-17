@@ -182,7 +182,7 @@ class FSSDH0SimCovDraw(H0Simulator):
 
         Tau = fea_tensor.reshape(n, -1)
 
-        cov = old_div(Tau.T.dot(Tau), n) + np.zeros((1, 1))
+        cov = old_div(Tau.T.dot(Tau),n) + np.zeros((1, 1))
         n_simulate = self.n_simulate
 
         ra_nfssd, eigs = FSSD.list_simulate_spectral(cov, J, n_simulate,
@@ -352,7 +352,7 @@ class FSSD(GofTest):
         #print grad_logp
         #print 'K'
         #print K
-        Xi = old_div((grad_logp_K + dKdV),np.sqrt(d*J))
+        Xi = old_div((grad_logp_K + dKdV), np.sqrt(d*J))
         #Xi = (grad_logp_K + dKdV)
         return Xi
 
@@ -377,9 +377,9 @@ class FSSD(GofTest):
 
         # mean/sd criterion 
         sigma_h1 = np.sqrt(u_variance + reg)
-        ratio = old_div(u_mean,sigma_h1) 
+        ratio = old_div(u_mean, sigma_h1)
         if use_2terms:
-            obj = old_div(-1.0,(np.sqrt(n)*sigma_h1)) + np.sqrt(n)*ratio
+            obj = old_div(-1.0, (np.sqrt(n)*sigma_h1)) + np.sqrt(n)*ratio
             #print obj
         else:
             obj = ratio
@@ -405,8 +405,8 @@ class FSSD(GofTest):
         # Tau = Xi.reshape(n, d*J)
         Tau = np.reshape(Xi, [n, d*J])
         if use_unbiased:
-            t1 = np.sum(np.mean(Tau, 0)**2)*(old_div(n,float(n-1)))
-            t2 = old_div(np.sum(np.mean(Tau**2, 0)),float(n-1))
+            t1 = np.sum(np.mean(Tau, 0)**2)*(old_div(n, float(n-1)))
+            t2 = old_div(np.sum(np.mean(Tau**2, 0)), float(n-1))
             # stat is the mean
             stat = t1 - t2
         else:
@@ -453,10 +453,10 @@ class FSSD(GofTest):
         Return a numpy array of simulated statistics.
         """
 
-        d = old_div(len(eigs),J)
+        d = old_div(len(eigs), J)
         assert d>0
        
-        block_size = max(20, int(old_div(1000.0,(d*J))))
+        block_size = max(20, int(old_div(1000.0, (d*J))))
         fssds = np.zeros(n_simulate)
         from_ind = 0
 
