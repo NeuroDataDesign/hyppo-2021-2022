@@ -16,9 +16,9 @@ __author__ = 'patel'
 from abc import ABCMeta, abstractmethod
 import autograd
 import autograd.numpy as np
-import util
-from util import NumpySeedContext
-from kernel import KGauss
+import fssdgof.util
+from fssdgof.util import NumpySeedContext
+from fssdgof.kernel import KGauss
 import logging
 from time import timer
 import matplotlib.pyplot as plt
@@ -118,7 +118,7 @@ class FSSDH0SimCovObs(H0Simulator):
             _, fea_tensor = gof.compute_stat(dat, return_feature_tensor=True)
 
         J = fea_tensor.shape[2]
-        X = dat
+        X = dat.data()
         n = X.shape[0]
        
         Tau = fea_tensor.reshape(n, -1)
@@ -236,7 +236,7 @@ class FSSD(GofTest):
         alpha = self.alpha
         null_sim = self.null_sim
         n_simulate = null_sim.n_simulate
-        X = dat
+        X = dat.data()
         n = X.shape[0]
         J = self.V.shape[0]
 
@@ -258,7 +258,7 @@ class FSSD(GofTest):
         """
         The statistic is n*FSSD^2.
         """
-        X = dat
+        X = dat.data()
         n = X.shape[0]
 
         # n x d x J
@@ -277,7 +277,7 @@ class FSSD(GofTest):
         Return the mean and variance under H1 of the test statistic (divided by
         n).
         """
-        X = dat
+        X = dat.data()
         Xi = self.feature_tensor(X)
         mean, variance = FSSD.ustat_h1_mean_variance(Xi, return_variance=True)
         return mean, variance
@@ -303,21 +303,7 @@ class FSSD(GofTest):
         Y: n x dy numpy array
         Return an n x dx x dy numpy array.
         """
-
-        #n, dx = X.shape
-        #dy = Y.shape[1]
-        #X_col_rep = X[:, np.tile(range(dx), (dy, 1)).T.reshape(-1) ]
-        #Y_tile = np.tile(Y, (1, dx))
-        #Z = X_col_rep*Y_tile
-        #return np.reshape(Z, (n, dx, dy))
         return np.einsum('ij,ik->ijk', X, Y)
-
-    @abstractmethod
-    def dim(self):
-        """
-        Return the dimension of the input.
-        """
-        raise NotImplementedError()
 
     def feature_tensor(self, X):
         """
@@ -330,30 +316,16 @@ class FSSD(GofTest):
         k = self.k
         J = self.V.shape[0]
         n, d = X.shape
-        # n x d matrix of gradients
         grad_logp = self.p.grad_log(X)
-        #assert np.all(util.is_real_num(grad_logp))
-        # n x J matrix
-        #print 'V'
-        #print self.V
         K = k.eval(X, self.V)
-        #assert np.all(util.is_real_num(K))
 
         list_grads = np.array([np.reshape(k.gradX_y(X, v), (1, n, d)) for v in self.V])
         stack0 = np.concatenate(list_grads, axis=0)
-        #a numpy array G of size n x d x J such that G[:, :, J]
-        #    is the derivative of k(X, V_j) with respect to X.
         dKdV = np.transpose(stack0, (1, 2, 0))
 
         # n x d x J tensor
         grad_logp_K = FSSD.outer_rows(grad_logp, K)
-        #print 'grad_logp'
-        #print grad_logp.dtype
-        #print grad_logp
-        #print 'K'
-        #print K
         Xi = old_div((grad_logp_K + dKdV), np.sqrt(d*J))
-        #Xi = (grad_logp_K + dKdV)
         return Xi
 
     @staticmethod
@@ -367,7 +339,7 @@ class FSSD(GofTest):
             the objective will be -1/(n**0.5*sigma_H1) + n**0.5 FSSD^2/sigma_H1, 
             which ignores the test threshold in the first term.
         """
-        X = dat
+        X = dat.data()
         n = X.shape[0]
         V = test_locs
         fssd = FSSD(p, k, V, null_sim=None)
@@ -375,12 +347,10 @@ class FSSD(GofTest):
         u_mean, u_variance = FSSD.ustat_h1_mean_variance(fea_tensor,
                 return_variance=True, use_unbiased=use_unbiased)
 
-        # mean/sd criterion 
         sigma_h1 = np.sqrt(u_variance + reg)
         ratio = old_div(u_mean, sigma_h1)
         if use_2terms:
             obj = old_div(-1.0, (np.sqrt(n)*sigma_h1)) + np.sqrt(n)*ratio
-            #print obj
         else:
             obj = ratio
         return obj
@@ -397,9 +367,6 @@ class FSSD(GofTest):
         """
         Xi = fea_tensor
         n, d, J = Xi.shape
-        #print 'Xi'
-        #print Xi
-        #assert np.all(util.is_real_num(Xi))
         assert n > 1, 'Need n > 1 to compute the mean of the statistic.'
         # n x d*J
         # Tau = Xi.reshape(n, d*J)
@@ -415,8 +382,6 @@ class FSSD(GofTest):
         if not return_variance:
             return stat
 
-        # compute the variance 
-        # mu: d*J vector
         mu = np.mean(Tau, 0)
         variance = 4*np.mean(np.dot(Tau, mu)**2) - 4*np.sum(mu**2)**2
         return stat, variance
@@ -537,15 +502,15 @@ class GaussFSSD(FSSD):
         X = dat.data()
         n_gwidth_cand = 5
         gwidth_factors = 2.0**np.linspace(-3, 3, n_gwidth_cand) 
-        med2 = util.meddistance(X, 1000)**2
+        med2 = fssdgof.util.meddistance(X, 1000)**2
 
         k = KGauss(med2*2)
         # fit a Gaussian to the data and draw to initialize V0
-        V0 = util.fit_gaussian_draw(X, J, seed=829, reg=1e-6)
+        V0 = fssdgof.util.fit_gaussian_draw(X, J, seed=829, reg=1e-6)
         list_gwidth = np.hstack( ( (med2)*gwidth_factors ) )
         besti, objs = GaussFSSD.grid_search_gwidth(p, dat, V0, list_gwidth)
         gwidth = list_gwidth[besti]
-        assert util.is_real_num(gwidth), 'gwidth not real. Was %s'%str(gwidth)
+        assert fssdgof.util.is_real_num(gwidth), 'gwidth not real. Was %s'%str(gwidth)
         assert gwidth > 0, 'gwidth not positive. Was %.3g'%gwidth
         logging.info('After grid search, gwidth=%.3g'%gwidth)
 
@@ -553,13 +518,13 @@ class GaussFSSD(FSSD):
         V_opt, gwidth_opt, info = GaussFSSD.optimize_locs_widths(p, dat,
                 gwidth, V0, **ops) 
 
-        # set the width bounds
-        #fac_min = 5e-2
-        #fac_max = 5e3
-        #gwidth_lb = fac_min*med2
-        #gwidth_ub = fac_max*med2
-        #gwidth_opt = max(gwidth_lb, min(gwidth_opt, gwidth_ub))
         return V_opt, gwidth_opt, info
+
+    def dim(self):
+        """
+        Return the dimension of the input.
+        """
+        raise NotImplementedError()
 
     @staticmethod
     def grid_search_gwidth(p, dat, test_locs, list_gwidth):
@@ -609,8 +574,6 @@ class GaussFSSD(FSSD):
         X = dat.data()
         n, d = X.shape
 
-        # Parameterize the Gaussian width with its square root (then square later)
-        # to automatically enforce the positivity.
         def obj(sqrt_gwidth, V):
             return -GaussFSSD.power_criterion(
                     p, dat, sqrt_gwidth**2, V, reg=reg, use_2terms=use_2terms)
@@ -623,15 +586,13 @@ class GaussFSSD(FSSD):
         def flat_obj(x):
             sqrt_gwidth, V = unflatten(x)
             return obj(sqrt_gwidth, V)
-        # gradient
-        #grad_obj = autograd.elementwise_grad(flat_obj)
-        # Initial point
+            
         x0 = flatten(np.sqrt(gwidth0), test_locs0)
         
         # make sure that the optimized gwidth is not too small or too large.
         fac_min = 1e-2 
         fac_max = 1e2
-        med2 = util.meddistance(X, subsample=1000)**2
+        med2 = fssdgof.util.meddistance(X, subsample=1000)**2
         if gwidth_lb is None:
             gwidth_lb = max(fac_min*med2, 1e-3)
         if gwidth_ub is None:
@@ -671,7 +632,7 @@ class GaussFSSD(FSSD):
         sq_gw_opt, V_opt = unflatten(x_opt)
         gw_opt = sq_gw_opt**2
 
-        assert util.is_real_num(gw_opt), 'gw_opt is not real. Was %s' % str(gw_opt)
+        assert fssdgof.util.is_real_num(gw_opt), 'gw_opt is not real. Was %s' % str(gw_opt)
 
         return V_opt, gw_opt, opt_result
 
