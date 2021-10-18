@@ -628,7 +628,7 @@ class GaussFSSD(FSSD):
         # Initial point
         x0 = flatten(np.sqrt(gwidth0), test_locs0)
         
-        #make sure that the optimized gwidth is not too small or too large.
+        # make sure that the optimized gwidth is not too small or too large.
         fac_min = 1e-2 
         fac_max = 1e2
         med2 = util.meddistance(X, subsample=1000)**2
