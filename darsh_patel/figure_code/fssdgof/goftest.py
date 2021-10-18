@@ -16,11 +16,11 @@ __author__ = 'patel'
 from abc import ABCMeta, abstractmethod
 import autograd
 import autograd.numpy as np
-import fssdgof.util
-from fssdgof.util import NumpySeedContext
-from fssdgof.kernel import KGauss
+import util
+from util import NumpySeedContext
+from kernel import KGauss
 import logging
-from time import timer
+# from time import timer
 import matplotlib.pyplot as plt
 
 import scipy
@@ -282,20 +282,6 @@ class FSSD(GofTest):
         mean, variance = FSSD.ustat_h1_mean_variance(Xi, return_variance=True)
         return mean, variance
 
-    def grad_log(self, X):
-        """
-        Evaluate the gradients (with respect to the input) of the log density at
-        each of the n points in X. This is the score function. Given an
-        implementation of log_den(), this method will automatically work.
-        Subclasses may override this if a more efficient implementation is
-        available.
-        X: n x d numpy array.
-        Return an n x d numpy array of gradients.
-        """
-        g = autograd.elementwise_grad(self.log_den)
-        G = g(X)
-        return G
-
     def outer_rows(X, Y):
         """
         Compute the outer product of each row in X, and Y.
@@ -502,15 +488,15 @@ class GaussFSSD(FSSD):
         X = dat.data()
         n_gwidth_cand = 5
         gwidth_factors = 2.0**np.linspace(-3, 3, n_gwidth_cand) 
-        med2 = fssdgof.util.meddistance(X, 1000)**2
+        med2 = util.meddistance(X, 1000)**2
 
         k = KGauss(med2*2)
         # fit a Gaussian to the data and draw to initialize V0
-        V0 = fssdgof.util.fit_gaussian_draw(X, J, seed=829, reg=1e-6)
+        V0 = util.fit_gaussian_draw(X, J, seed=829, reg=1e-6)
         list_gwidth = np.hstack( ( (med2)*gwidth_factors ) )
         besti, objs = GaussFSSD.grid_search_gwidth(p, dat, V0, list_gwidth)
         gwidth = list_gwidth[besti]
-        assert fssdgof.util.is_real_num(gwidth), 'gwidth not real. Was %s'%str(gwidth)
+        assert util.is_real_num(gwidth), 'gwidth not real. Was %s'%str(gwidth)
         assert gwidth > 0, 'gwidth not positive. Was %.3g'%gwidth
         logging.info('After grid search, gwidth=%.3g'%gwidth)
 
@@ -519,12 +505,6 @@ class GaussFSSD(FSSD):
                 gwidth, V0, **ops) 
 
         return V_opt, gwidth_opt, info
-
-    def dim(self):
-        """
-        Return the dimension of the input.
-        """
-        raise NotImplementedError()
 
     @staticmethod
     def grid_search_gwidth(p, dat, test_locs, list_gwidth):
@@ -592,7 +572,7 @@ class GaussFSSD(FSSD):
         # make sure that the optimized gwidth is not too small or too large.
         fac_min = 1e-2 
         fac_max = 1e2
-        med2 = fssdgof.util.meddistance(X, subsample=1000)**2
+        med2 = util.meddistance(X, subsample=1000)**2
         if gwidth_lb is None:
             gwidth_lb = max(fac_min*med2, 1e-3)
         if gwidth_ub is None:
@@ -627,13 +607,13 @@ class GaussFSSD(FSSD):
         )
 
         opt_result = dict(opt_result)
-        opt_result['time_secs'] = timer.secs
+        # opt_result['time_secs'] = timer.secs
         x_opt = opt_result['x']
-        sq_gw_opt, V_opt = unflatten(x_opt)
-        gw_opt = sq_gw_opt**2
+        V_opt = unflatten(x_opt)
+        # gw_opt = sq_gw_opt**2
 
-        assert fssdgof.util.is_real_num(gw_opt), 'gw_opt is not real. Was %s' % str(gw_opt)
+        # assert util.is_real_num(gw_opt), 'gw_opt is not real. Was %s' % str(gw_opt)
 
-        return V_opt, gw_opt, opt_result
+        return V_opt, opt_result
 
 # end of class GaussFSSD

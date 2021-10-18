@@ -13,7 +13,7 @@ from abc import ABCMeta, abstractmethod
 import autograd
 import autograd.numpy as np
 import numpy as np
-import fssdgof.util
+import util
 
 class Kernel(with_metaclass(ABCMeta, object)):
     """Abstract class for kernels. Inputs to all methods are numpy arrays."""
