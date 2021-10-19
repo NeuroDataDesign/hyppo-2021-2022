@@ -13,7 +13,7 @@ __author__ = 'patel'
 from abc import ABCMeta, abstractmethod
 import autograd
 import autograd.numpy as np
-import kgof.util as util
+import util
 import scipy.stats as stats
 
 class Data(object):

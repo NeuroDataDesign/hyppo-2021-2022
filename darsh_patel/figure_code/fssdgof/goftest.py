@@ -18,6 +18,7 @@ import autograd
 import autograd.numpy as np
 import util
 from util import NumpySeedContext
+import kernel
 from kernel import KGauss
 import logging
 # from time import timer
