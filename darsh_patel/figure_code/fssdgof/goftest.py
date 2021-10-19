@@ -502,10 +502,10 @@ class GaussFSSD(FSSD):
         logging.info('After grid search, gwidth=%.3g'%gwidth)
 
         
-        V_opt, info = GaussFSSD.optimize_locs_widths(p, dat,
-                gwidth, V0, **ops) #gwidth_opt
+        V_opt, gwidth_opt, info = GaussFSSD.optimize_locs_widths(p, dat,
+                gwidth, V0, **ops) 
 
-        return V_opt, info #, gwidth_opt
+        return V_opt, gwidth_opt, info
 
     @staticmethod
     def grid_search_gwidth(p, dat, test_locs, list_gwidth):
@@ -615,6 +615,8 @@ class GaussFSSD(FSSD):
 
         # assert util.is_real_num(gw_opt), 'gw_opt is not real. Was %s' % str(gw_opt)
 
-        return V_opt, opt_result
+        gw_opt = 15
+
+        return V_opt, gw_opt, opt_result
 
 # end of class GaussFSSD
