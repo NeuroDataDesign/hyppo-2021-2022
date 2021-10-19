@@ -12,7 +12,6 @@ __author__ = 'patel'
 from abc import ABCMeta, abstractmethod
 import autograd
 import autograd.numpy as np
-import numpy as np
 import util
 
 class Kernel(with_metaclass(ABCMeta, object)):

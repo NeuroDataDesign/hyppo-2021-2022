@@ -186,9 +186,9 @@ class FSSDH0SimCovDraw(H0Simulator):
         cov = old_div(Tau.T.dot(Tau),n) + np.zeros((1, 1))
         n_simulate = self.n_simulate
 
-        ra_nfssd, eigs = FSSD.list_simulate_spectral(cov, J, n_simulate,
+        arr_nfssd, eigs = FSSD.list_simulate_spectral(cov, J, n_simulate,
                 seed=self.seed)
-        return {'sim_stats': ra_nfssd}
+        return {'sim_stats': arr_nfssd}
 
 # end of FSSDH0SimCovDraw
 #-----------------------------------------------------------------------
@@ -501,10 +501,10 @@ class GaussFSSD(FSSD):
         logging.info('After grid search, gwidth=%.3g'%gwidth)
 
         
-        V_opt, gwidth_opt, info = GaussFSSD.optimize_locs_widths(p, dat,
-                gwidth, V0, **ops) 
+        V_opt, info = GaussFSSD.optimize_locs_widths(p, dat,
+                gwidth, V0, **ops) #gwidth_opt
 
-        return V_opt, gwidth_opt, info
+        return V_opt, info #, gwidth_opt
 
     @staticmethod
     def grid_search_gwidth(p, dat, test_locs, list_gwidth):

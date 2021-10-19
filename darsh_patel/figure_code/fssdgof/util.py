@@ -13,6 +13,7 @@ from past.utils import old_div
 from builtins import object
 __author__ = 'patel'
 
+import autograd
 import autograd.numpy as np
 import time 
 
