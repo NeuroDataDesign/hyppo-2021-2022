@@ -154,7 +154,6 @@ class FSSDH0SimCovDraw(H0Simulator):
         This method does not use dat.
         """
         dat = None
-        #assert isinstance(gof, FSSD)
         # p = an UnnormalizedDensity
         p = gof.p
         ds = p.get_datasource()
@@ -170,7 +169,6 @@ class FSSDH0SimCovDraw(H0Simulator):
         Tau = fea_tensor.reshape(n, -1)
         # Make sure it is a matrix i.e, np.cov returns a scalar when Tau is
         # 1d.
-        #cov = np.cov(Tau.T) + np.zeros((1, 1))
         cov = old_div(Tau.T.dot(Tau),n) + np.zeros((1, 1))
         n_simulate = self.n_simulate
 
@@ -295,7 +293,6 @@ class FSSD(GofTest):
         grad_logp_K = util.outer_rows(grad_logp, K)
       
         Xi = old_div((grad_logp_K + dKdV),np.sqrt(d*J))
-        #Xi = (grad_logp_K + dKdV)
         return Xi
 
 
@@ -324,7 +321,6 @@ class FSSD(GofTest):
         ratio = old_div(u_mean,sigma_h1) 
         if use_2terms:
             obj = old_div(-1.0,(np.sqrt(n)*sigma_h1)) + np.sqrt(n)*ratio
-            #print obj
         else:
             obj = ratio
         return obj
@@ -343,12 +339,9 @@ class FSSD(GofTest):
         """
         Xi = fea_tensor
         n, d, J = Xi.shape
-        #print 'Xi'
-        #print Xi
-        #assert np.all(util.is_real_num(Xi))
+
         assert n > 1, 'Need n > 1 to compute the mean of the statistic.'
         # n x d*J
-        # Tau = Xi.reshape(n, d*J)
         Tau = np.reshape(Xi, [n, d*J])
         if use_unbiased:
             t1 = np.sum(np.mean(Tau, 0)**2)*(old_div(n,float(n-1)))
@@ -434,9 +427,9 @@ class FSSD(GofTest):
             objs[i] = FSSD.power_criterion(p, dat, ki, test_locs)
             logging.info('(%d), obj: %5.4g, k: %s' %(i, objs[i], str(ki)))
 
-        #Widths that come early in the list 
+        # Widths that come early in the list 
         # are preferred if test powers are equal.
-        #bestij = np.unravel_index(objs.argmax(), objs.shape)
+
         besti = objs.argmax()
         return besti, objs
 
@@ -492,12 +485,6 @@ class GaussFSSD(FSSD):
         V_opt, gwidth_opt, info = GaussFSSD.optimize_locs_widths(p, dat,
                 gwidth, V0, **ops) 
 
-        # set the width bounds
-        #fac_min = 5e-2
-        #fac_max = 5e3
-        #gwidth_lb = fac_min*med2
-        #gwidth_ub = fac_max*med2
-        #gwidth_opt = max(gwidth_lb, min(gwidth_opt, gwidth_ub))
         return V_opt, gwidth_opt, info
 
     @staticmethod
@@ -528,7 +515,7 @@ class GaussFSSD(FSSD):
         - reg: reg to add to the mean/sqrt(variance) criterion to become
             mean/sqrt(variance + reg)
         - gwidth0: initial value of the Gaussian width^2
-        - max_iter: #gradient descent iterations
+        - max_iter: # gradient descent iterations
         - tol_fun: termination tolerance of the objective value
         - disp: True to print convergence messages
         - locs_bounds_frac: When making box bounds for the test_locs, extend
@@ -539,8 +526,8 @@ class GaussFSSD(FSSD):
         - use_2terms: If True, then besides the signal-to-noise ratio
           criterion, the objective function will also include the first term
           that is dropped.
-        #- If the lb, ub bounds are None, use fraction of the median heuristics 
-        #    to automatically set the bounds.
+        - If the lb, ub bounds are None, use fraction of the median heuristics 
+          to automatically set the bounds.
         
         Return (V test_locs, gaussian width, optimization info log)
         """
@@ -563,11 +550,11 @@ class GaussFSSD(FSSD):
             sqrt_gwidth, V = unflatten(x)
             return obj(sqrt_gwidth, V)
         # gradient
-        #grad_obj = autograd.elementwise_grad(flat_obj)
+        # grad_obj = autograd.elementwise_grad(flat_obj)
         # Initial point
         x0 = flatten(np.sqrt(gwidth0), test_locs0)
         
-        #make sure that the optimized gwidth is not too small or too large.
+        # Make sure that the optimized gwidth is not too small or too large.
         fac_min = 1e-2 
         fac_max = 1e2
         med2 = util.meddistance(X, subsample=1000)**2
@@ -590,7 +577,7 @@ class GaussFSSD(FSSD):
         x0_ub = np.hstack((np.sqrt(gwidth_ub), np.reshape(V_ub, -1)))
         x0_bounds = list(zip(x0_lb, x0_ub))
 
-        # optimize. Time the optimization as well.
+        # Optimize. Time the optimization as well.
         # https://docs.scipy.org/doc/scipy/reference/optimize.minimize-lbfgsb.html
         grad_obj = autograd.elementwise_grad(flat_obj)
         with util.ContextTimer() as timer:
