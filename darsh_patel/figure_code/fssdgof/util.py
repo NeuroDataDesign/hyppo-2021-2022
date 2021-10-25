@@ -14,7 +14,7 @@ from builtins import object
 __author__ = 'patel'
 
 import autograd.numpy as np
-import time 
+import time
 
 class ContextTimer(object):
     """
