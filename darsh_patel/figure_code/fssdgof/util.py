@@ -11,7 +11,6 @@ from future import standard_library
 standard_library.install_aliases()
 from past.utils import old_div
 from builtins import object
-__author__ = 'patel'
 
 import autograd.numpy as np
 import time

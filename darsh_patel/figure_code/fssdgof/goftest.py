@@ -11,8 +11,6 @@ from past.utils import old_div
 from builtins import object
 from future.utils import with_metaclass
 
-__author__ = 'patel'
-
 from abc import ABCMeta, abstractmethod
 import autograd
 import autograd.numpy as np
