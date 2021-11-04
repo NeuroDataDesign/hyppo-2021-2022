@@ -7,9 +7,8 @@ from __future__ import division
 from builtins import range
 from past.utils import old_div
 from builtins import object
-from future.utils import with_metaclass
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 import autograd
 import autograd.numpy as np
 import util
@@ -100,7 +99,7 @@ class Data(object):
 ### end Data class        
 
 
-class DataSource(with_metaclass(ABCMeta, object)):
+class DataSource(ABC):
     """
     A source of data allowing resampling. Subclasses may prefix 
     class names with DS. 

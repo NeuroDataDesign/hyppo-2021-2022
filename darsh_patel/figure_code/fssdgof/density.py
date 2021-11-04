@@ -7,9 +7,8 @@ from __future__ import division
 from builtins import range
 from past.utils import old_div
 from builtins import object
-from future.utils import with_metaclass
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 import autograd
 import autograd.numpy as np
 import data
@@ -36,7 +35,7 @@ def from_grad_log(d, g):
     return UDFromCallable(d, fgrad_log=g)
 
 
-class UnnormalizedDensity(with_metaclass(ABCMeta, object)):
+class UnnormalizedDensity(ABC):
     """
     An abstract class of an unnormalized probability density function.  This is
     intended to be used to represent a model of the data for goodness-of-fit

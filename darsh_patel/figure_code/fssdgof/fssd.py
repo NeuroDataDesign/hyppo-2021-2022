@@ -5,9 +5,8 @@ from builtins import str
 from builtins import range
 from past.utils import old_div
 from builtins import object
-from future.utils import with_metaclass
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC
 import autograd
 import autograd.numpy as np
 import data
@@ -57,7 +56,7 @@ class FSSD(GofTest):
         self.V = V 
         self.null_sim = null_sim
 
-    def perform_test(self, dat, return_simulated_stats=False):
+    def test(self, dat, return_simulated_stats=False):
         """
         dat: an instance of Data
         """
@@ -69,7 +68,7 @@ class FSSD(GofTest):
             n = X.shape[0]
             J = self.V.shape[0]
 
-            nfssd, fea_tensor = self.compute_stat(dat, return_feature_tensor=True)
+            nfssd, fea_tensor = self.statistic(dat, return_feature_tensor=True)
             sim_results = null_sim.simulate(self, dat, fea_tensor)
             arr_nfssd = sim_results['sim_stats']
 
@@ -84,7 +83,7 @@ class FSSD(GofTest):
             results['sim_stats'] = arr_nfssd
         return results
 
-    def compute_stat(self, dat, return_feature_tensor=False):
+    def statistic(self, dat, return_feature_tensor=False):
         """
         The statistic is n*FSSD^2.
         """

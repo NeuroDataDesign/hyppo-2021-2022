@@ -5,9 +5,8 @@ from builtins import str
 from builtins import range
 from past.utils import old_div
 from builtins import object
-from future.utils import with_metaclass
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC
 import autograd
 import autograd.numpy as np
 import data

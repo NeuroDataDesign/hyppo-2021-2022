@@ -6,14 +6,13 @@ from __future__ import division
 from builtins import str
 from past.utils import old_div
 from builtins import object
-from future.utils import with_metaclass
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 import autograd
 import autograd.numpy as np
 import util
 
-class Kernel(with_metaclass(ABCMeta, object)):
+class Kernel(ABC):
     """Abstract class for kernels. Inputs to all methods are numpy arrays."""
 
     @abstractmethod
@@ -35,7 +34,7 @@ class Kernel(with_metaclass(ABCMeta, object)):
         """
         pass
 
-class DifferentiableKernel(with_metaclass(ABCMeta, Kernel)):
+class DifferentiableKernel(ABC):
     def gradX_y(self, X, y):
         """
         Compute the gradient with respect to X (the first argument of the
@@ -56,7 +55,7 @@ class DifferentiableKernel(with_metaclass(ABCMeta, Kernel)):
 
 # end class KSTKernel
 
-class LinearKSTKernel(with_metaclass(ABCMeta, Kernel)):
+class LinearKSTKernel(ABC):
     """
     Interface specifiying methods a kernel has to implement to be used with
     the linear-time version of Kernelized Stein discrepancy test of
@@ -97,7 +96,7 @@ class LinearKSTKernel(with_metaclass(ABCMeta, Kernel)):
         """
         raise NotImplementedError()
 
-class KSTKernel(with_metaclass(ABCMeta, Kernel)):
+class KSTKernel(ABC):
     """
     Interface specifiying methods a kernel has to implement to be used with
     the Kernelized Stein discrepancy test of Chwialkowski et al., 2016 and

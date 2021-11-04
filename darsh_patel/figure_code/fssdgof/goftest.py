@@ -9,9 +9,8 @@ from builtins import str
 from builtins import range
 from past.utils import old_div
 from builtins import object
-from future.utils import with_metaclass
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 import autograd
 import autograd.numpy as np
 import data
@@ -26,7 +25,7 @@ import matplotlib.pyplot as plt
 import scipy
 import scipy.stats as stats
 
-class GofTest(with_metaclass(ABCMeta, object)):
+class GofTest(ABC):
     """
     Abstract class for a goodness-of-fit test.
     """
@@ -40,7 +39,7 @@ class GofTest(with_metaclass(ABCMeta, object)):
         self.alpha = alpha
 
     @abstractmethod
-    def perform_test(self, dat):
+    def test(self, dat):
         """perform the goodness-of-fit test and return values computed in a dictionary:
         {
             alpha: 0.01, 
@@ -54,7 +53,7 @@ class GofTest(with_metaclass(ABCMeta, object)):
         raise NotImplementedError()
 
     @abstractmethod
-    def compute_stat(self, dat):
+    def statistic(self, dat):
         """Compute the test statistic"""
         raise NotImplementedError()
 
