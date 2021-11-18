@@ -1,0 +1,128 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[52]:
+
+
+from sklearn.base import BaseEstimator
+from sklearn.feature_selection import SelectorMixin
+from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
+import numpy as np
+from scipy.stats import multiscale_graphcorr
+from scipy._lib._util import MapWrapper
+import warnings
+
+def k_sample_test(X, y,score_func="mgc"):
+    """Compute the multivariate independence test statisitic for the provided sample.
+    Read more in the :ref:`User Guide <multivariate_feature_selection>`.
+    Parameters
+    ----------
+    X : {array-like, sparse matrix} of shape (n_samples, n_features)
+        The set of regressors that will be tested sequentially.
+    y : ndarray of shape (n_samples,)
+        The target vector.
+    score_func : string that refers to a k_sample multivariate independence test from scipy
+                The default and only existing test is multiscale graph correlation.
+    Returns
+    -------
+    stat : float that refers to the computed k_sample test statistic
+    """
+    k_array = np.unique(y)
+    matrices = []
+    for i in k_array:
+        indices = np.where(y == i)[0] 
+        if len(X.shape) == 1:
+            xi = X[indices]
+        else:
+            xi = X[indices,:]
+        matrices.append(xi)
+    X = np.concatenate(matrices)
+    vs = []
+    for i in range(len(np.unique(y))):
+        n = matrices[i].shape[0]
+        encode = np.zeros(shape=(n, len(matrices)))
+        encode[:, i] = np.ones(shape=n)
+        vs.append(encode)
+    y = np.concatenate(vs)
+    warnings.filterwarnings("ignore")
+    mgc = multiscale_graphcorr(X,y,reps = 0)
+    stat = mgc.stat #mgc case
+    return(stat)
+
+class MultivariateFeatureSelector(SelectorMixin, BaseEstimator):    
+    """Feature selector that performs forward selection using Multivariate Independence Test until 
+        the requested subset of features is selected.
+        This Multivariate Independence Test driven Feature Selector adds 
+        (forward selection) features to form a feature subset in a greedy fashion. 
+        At each stage, the given Multivariate Independence Test is used to choose 
+        the best feature to add based on the test statistics calculated with the already selected
+        best features and each individual feature not already selected. 
+    Parameters
+    ----------
+    k: int, default=10
+        amount of features to select. 
+    Attributes
+    ----------
+    best_features_ : array, shape (k,)
+         k best features of features_
+    features_ : array, shape (n_features,)
+        all features in X
+    """
+    def __init__(self, k=10):
+        self.k = k
+    class _Parallel:
+        def __init__(self, X_new, y,best_features):
+            self.X_new = X_new
+            self.y = y
+            self.best_feat = best_features
+
+        def __call__(self, index):
+            if np.var(self.X_new[:,index]) == 0:
+                stat = -1000.0
+            else:   
+                if len(self.best_feat)==0:
+                    X_j =  self.X_new[:,index] #each feature from j to last feature 
+                    stat= k_sample_test(X_j,self.y)
+                else:
+                    columns = self.best_feat #construct array for indexing 
+                    columns.append(index)
+                    X_j = self.X_new[:,columns]#perform test with obtained features against every feature after to then obtain the best group of features with one additional feature 
+                    stat= k_sample_test(X_j,self.y)
+            return stat
+    def fit(self, X, y,workers = -1):
+        """Learn the features to select from X.
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            Training vectors, where `n_samples` is the number of samples and
+            `n_features` is the number of predictors.
+        y : array-like of shape (n_samples,), default=None
+            Target values. 
+        Returns
+        -------
+        self : object
+            Returns the instance itself.
+        """
+        features = np.arange(X.shape[1])#features of matrix X(n samples by p features, creates an array of feature indexes
+        best_features = []
+        while (len(best_features) < self.k): # outerloop to obtain up to k features 
+            X_new = np.array(X)# establishes matrix of data as np array
+            parallel = self._Parallel(X_new=X_new, y=y,best_features = best_features)#establishes parallel operation helper class object
+            with MapWrapper(workers) as mapwrapper:
+                scores = list(mapwrapper(parallel, features)) #maps in parallel the parallel operation that calcs score with the iterable features list to test, with best_features already obtained
+            scores_index = np.zeros((len(features),2)) #temp array
+            scores_index[:,0] = features #input features as first column, all features tested(exclude best_features)
+            scores_index[:,1] = scores #input scores in second column
+            sorted_index = scores_index[scores_index[:, 1].argsort()] #sort by scores column
+            best = sorted_index[len(scores)-1,0] #find best of the scores
+            best_features.append(int(best)) #append new best feature column index 
+            features = np.delete(features,np.where(features == best))
+        self.best_features_ = np.array(best_features)
+        self.features_ = np.arange(X.shape[1])
+        return self
+    def _get_support_mask(self):
+        check_is_fitted(self)
+        return  np.array([x in self.best_features_ for x in self.features_])
+    def _more_tags(self):
+        return {"allow_nan": True,"requires_y": True}
+
