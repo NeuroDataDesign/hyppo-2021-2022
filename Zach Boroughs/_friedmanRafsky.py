@@ -252,7 +252,7 @@ def MST(data, algorithm):
     """
     if algorithm == 'Kruskal':
 
-        g = Graph(len(data[0]-1))
+        g = Graph(len(data[0]))
 
         for i in range(len(data[0])):
             j = i + 1
@@ -271,11 +271,11 @@ def MST(data, algorithm):
         for i in range(len(data[0])):
             j = i + 1
 
-        while j <= (len(data[0]) - 1):
-            weight = linalg.norm(data[:,i] - data[:,j])
-            G[i][j] = weight
-            G[j][i] = weight
-            j += 1;
+            while j <= (len(data[0]) - 1):
+                weight = linalg.norm(data[:,i] - data[:,j])
+                G[i][j] = weight
+                G[j][i] = weight
+                j += 1;
 
         MST_connections = prim(G)
 
