@@ -1,1 +1,35 @@
+Dimensionality Reduction for Supervised Learning with Reproducing Kernel Hilbert Spaces
+
+Given regression or classification problem, want to find low-dim 'effective subspace' for X which retains statistical relationship
+Establish general nonparametric characterization of condition independence using covariance operators on reproducing kernel Hilbert spaces.
+Deriive contrast function for estimation of effective subspace.
+Requires neither assumptions on marginal dist of X nor a parametric model of conditional dist of Y
+
+Can be compared to methods of PCA
+Origin of this technique in sliced inverse regression (semiparametric method for finding effective subspaces in regression
+Range of response variable Y is paritioned into a set of slices and sample means of X are compared within each slice
+Kernel Dimensionality Reduction (KDR) is based on the estimation and optimization of a class of operators on reproducing kernel Hilbert spaces
+Can turn dimensionality reduction problem into an optimization problem by expressing it in terms of covariance operators
+
+Must assume no prior knowledge of the regressor and place no assumptions on the conditional probability
+We either maximize mutual information or make Y and V conditionally independent given U, this method chooses the latter
+Use existing knowledge to derive an objective function for characterizing conditional independence using cross-covariance operators
+Ultimate goal is to minimize mutual information between set of recovered source variables
+
+Tested on real data, performs very well in separation, even in low-dim subspaces. Kernel method successfully finds a subspace which preserves
+class information even when dimensionality is reduced significantly.
+
+There are several statistical problems which need to be addressed in further research on KDR. First, a basic analysis of the statistical consistency of the KDR-based estimator—
+the convergence of the estimator to the true subspace when such a space really exists—is needed. We expect that, to prove consistency, we will need to impose a condition on the
+rate of decrease of the regularization coefficient ε as the sample size n goes to infinity. Second, and most significantly, we need rigorous methods for choosing the dimensionality
+of the effective subspace. 
+If the goal is that of achieving high predictive performance after dimensionality reduction, we can use one of many existing methods (e.g., cross-validation,
+penalty-based methods) to assess the expected generalization as a function of dimensionality.
+
+Note in particular that by using KDR as a method to select an estimator given a fixed dimensionality, we have substantially reduced the number of hypotheses being considered,
+and expect to find ourselves in a regime in which methods such as cross-validation are likely to be effective. It is also worth noting, however, that the goals of dimensionality
+reduction are not always simply that of prediction; in particular, the search for small sets of explanatory variables will need to be guided by other principles. Finally, asymptotic
+analysis may provide useful guidance for selecting the dimensionality; an example of such an analysis that we believe can be adopted for KDR has been presented by Li (1991) for
+the SIR method. (potential further reading)
+
 
