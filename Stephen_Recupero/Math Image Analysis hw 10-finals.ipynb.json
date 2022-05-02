@@ -1,0 +1,341 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "55c5235d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from PIL import Image\n",
+    "from scipy import ndimage\n",
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "1fdd4762",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Question1 parta\n",
+    "a_1 = Image.open(\"image-Dante.png\").convert(\"L\")\n",
+    "data = np.asarray(a_1)\n",
+    "f_data = np.fft.fft2(data)\n",
+    "f_data_t = np.log(1+np.abs(f_data))\n",
+    "data_max = np.max(np.max(f_data_t))\n",
+    "transform = np.uint8(399*f_data_t/data_max)\n",
+    "image = Image.fromarray(transform)\n",
+    "image.show()\n",
+    "\n",
+    "transform_2 = np.fft.fftshift(transform)\n",
+    "image_2 = Image.fromarray(transform_2)\n",
+    "image_2.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 87,
+   "id": "afcfcd3e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/var/folders/0d/lly5tvn96d3gjn3fc3pwl75m0000gn/T/ipykernel_25586/3431465981.py:20: ComplexWarning: Casting complex values to real discards the imaginary part\n",
+      "  transform_6 = np.uint8(transform_4)\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Question1 partb\n",
+    "\n",
+    "def one_transform(data_matrix):\n",
+    "    p = data_matrix.shape[0]\n",
+    "    arr = np.zeros((p,p))\n",
+    "    for i in range(p):\n",
+    "        for j in range(p):\n",
+    "            if  (i<25 or i>p-25) and (j<25 or j>p-25):\n",
+    "                arr[i,j] = 1\n",
+    "                \n",
+    "    return arr\n",
+    "a_1.show()\n",
+    "f_data = np.fft.fft2(data)\n",
+    "transform_5 = np.fft.fftshift(f_data)\n",
+    "transform_3 = transform_5* np.fft.fftshift(one_transform(transform_5))\n",
+    "\n",
+    "transform_4 = np.fft.ifftshift(transform_3)\n",
+    "transform_4 = np.fft.ifft2(transform_4)\n",
+    "data_max = np.max(np.max(transform_4))\n",
+    "transform_6 = np.uint8(transform_4)\n",
+    "image_3 = Image.fromarray(transform_6)\n",
+    "image_3.show()\n",
+    "\n",
+    "\n",
+    "\n",
+    "            "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 93,
+   "id": "8dea7265",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/var/folders/0d/lly5tvn96d3gjn3fc3pwl75m0000gn/T/ipykernel_25586/4194710301.py:33: ComplexWarning: Casting complex values to real discards the imaginary part\n",
+      "  transform_6 = np.uint8(transform_4)\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Question 2 part a\n",
+    "a_1 = Image.open(\"image-Dante.png\").convert(\"L\")\n",
+    "data = np.asarray(a_1)\n",
+    "f_data = np.fft.fft2(data)\n",
+    "f_data_t = np.log(1+np.abs(f_data))\n",
+    "data_max = np.max(np.max(f_data_t))\n",
+    "transform = np.uint8(399*f_data_t/data_max)\n",
+    "transform_2 = np.fft.fftshift(transform)\n",
+    "image_4 = Image.fromarray(transform_2)\n",
+    "image_4.show()\n",
+    "\n",
+    "\n",
+    "\n",
+    "#Question 2 part b\n",
+    "def low_pass(data_matrix, thresh):\n",
+    "    p = data_matrix.shape[0]\n",
+    "    arr = np.zeros((p,p))\n",
+    "    for i in range(p):\n",
+    "        for j in range(p):\n",
+    "            \n",
+    "            if  np.sqrt(i**2 + j**2) < thresh or np.sqrt((i-p)**2 + j**2) < thresh or np.sqrt(i**2 + (j-p)**2) < thresh or np.sqrt((i-p)**2 + (j-p)**2) < thresh :\n",
+    "                arr[i,j] = 1\n",
+    "                \n",
+    "    return arr\n",
+    "\n",
+    "f_data = np.fft.fft2(data)\n",
+    "transform_5 = np.fft.fftshift(f_data)\n",
+    "transform_3 = transform_5* np.fft.fftshift(low_pass(transform_5,50))\n",
+    "\n",
+    "transform_4 = np.fft.ifftshift(transform_3)\n",
+    "transform_4 = np.fft.ifft2(transform_4)\n",
+    "data_max = np.max(np.max(transform_4))\n",
+    "transform_6 = np.uint8(transform_4)\n",
+    "image_5 = Image.fromarray(transform_6)\n",
+    "image_5.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 139,
+   "id": "950ce348",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/var/folders/0d/lly5tvn96d3gjn3fc3pwl75m0000gn/T/ipykernel_25586/3376215724.py:18: ComplexWarning: Casting complex values to real discards the imaginary part\n",
+      "  transform_6 = np.uint8(transform_4)\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "194.8845755126953\n",
+      "194.1490905883789\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Question2 part c\n",
+    "\n",
+    "def butterworth(data_matrix, thresh, N):\n",
+    "    p = data_matrix.shape[0]\n",
+    "    arr = np.zeros((p,p))\n",
+    "    for i in range(p):\n",
+    "        for j in range(p):\n",
+    "            arr[i,j] = 1/(1+((np.sqrt((i**2 + j**2)))/thresh)**(2*N))\n",
+    "    return arr\n",
+    "\n",
+    "f_data = np.fft.fft2(data)\n",
+    "transform_5 = np.fft.fftshift(f_data)\n",
+    "transform_3 = transform_5* np.fft.fftshift(butterworth(transform_5,1200,2))\n",
+    "\n",
+    "transform_4 = np.fft.ifftshift(transform_3)\n",
+    "transform_4 = np.fft.ifft2(transform_4)\n",
+    "data_max = np.max(np.max(transform_4))\n",
+    "transform_6 = np.uint8(transform_4)\n",
+    "image_6 = Image.fromarray(transform_6)\n",
+    "image_6.show()\n",
+    "\n",
+    "\n",
+    "\n",
+    "#Question2 part d\n",
+    "g= data\n",
+    "m = transform_6\n",
+    "\n",
+    "g_2 = g + 3*(g-m)\n",
+    "image_7 = Image.fromarray(g_2)\n",
+    "image_7.show()\n",
+    "\n",
+    "def total_variation(image):\n",
+    "    dx = ndimage.sobel(image,0)\n",
+    "    dy = ndimage.sobel(image,1)\n",
+    "    mag = np.hypot(dx,dy)\n",
+    "    total_V = 0\n",
+    "    for i in range(mag.shape[0]):\n",
+    "        for j in range(mag.shape[1]):\n",
+    "            total_V = total_V + mag[i,j]\n",
+    "    total_V = total_V / (mag.shape[0]*mag.shape[1])\n",
+    "    return total_V\n",
+    "\n",
+    "print(total_variation(a_1)) #original image total variatiaon\n",
+    "print(total_variation(image_7)) #sharpened image total variation\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 192,
+   "id": "e4bee21a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(393, 392)\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/var/folders/0d/lly5tvn96d3gjn3fc3pwl75m0000gn/T/ipykernel_25586/4021923814.py:39: ComplexWarning: Casting complex values to real discards the imaginary part\n",
+      "  transform_6 = np.uint8(transform_4)\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Question 3\n",
+    "a_1 = Image.open(\"image-chest-xrays.png\").convert(\"L\")\n",
+    "a_1.show()\n",
+    "data = np.asarray(a_1)\n",
+    "f_data = np.fft.fft2(data)\n",
+    "f_data_t = np.log(1+np.abs(f_data))\n",
+    "data_max = np.max(np.max(f_data_t))\n",
+    "transform = np.uint8(393*f_data_t/data_max)\n",
+    "transform_2 = np.fft.fftshift(transform)\n",
+    "image_7 = Image.fromarray(transform_2)\n",
+    "image_7.show()\n",
+    "\n",
+    "nw = 194\n",
+    "\n",
+    "se = 204\n",
+    "\n",
+    "def notch(data_matrix):\n",
+    "    p = data_matrix.shape[0]\n",
+    "    k = data_matrix.shape[1]\n",
+    "    arr = np.ones((p,k))\n",
+    "    nw_i = p/2 - 10.5\n",
+    "    nw_j = k/2 - 10.5\n",
+    "    se_i = p/2 + 10.5\n",
+    "    se_j = k/2 + 10.5\n",
+    "    for i in range(p):\n",
+    "        for j in range(k):\n",
+    "            if np.sqrt((i-nw_i)**2 + (j-nw_j)**2) < 7.5 or np.sqrt((i-se_i)**2 + (j-se_j)**2) < 7.5:\n",
+    "                arr[i,j] = 0\n",
+    "    return arr\n",
+    "\n",
+    "\n",
+    "f_data = np.fft.fft2(data)\n",
+    "transform_5 = np.fft.fftshift(f_data)\n",
+    "transform_3 = transform_5* notch(transform_5)\n",
+    "\n",
+    "transform_4 = np.fft.ifftshift(transform_3)\n",
+    "transform_4 = np.fft.ifft2(transform_4)\n",
+    "data_max = np.max(np.max(transform_4))\n",
+    "transform_6 = np.uint8(transform_4)\n",
+    "image_8 = Image.fromarray(transform_6)\n",
+    "image_8.show()\n",
+    "            \n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 229,
+   "id": "a366ad1a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Question 4\n",
+    "a_1 = Image.open(\"image-Dante.png\").convert(\"L\")\n",
+    "data = np.asarray(a_1)\n",
+    "f_data = np.fft.fft2(data)\n",
+    "real_1 = np.fft.fftshift(np.abs(f_data))\n",
+    "\n",
+    "im_1 = np.fft.fftshift(np.exp(1j*np.angle(f_data)))\n",
+    "a_2 = Image.open(\"image-moon2.png\").convert(\"L\")\n",
+    "data_2 = np.asarray(a_2)\n",
+    "f_data_2 = np.fft.fft2(data_2)\n",
+    "real_2 = np.fft.fftshift(np.abs(f_data_2))\n",
+    "im_2 = np.fft.fftshift(np.exp(1j*np.angle(f_data_2)))\n",
+    "\n",
+    "transform_1 = real_1*im_2\n",
+    "transform_2 = real_2*im_1\n",
+    "\n",
+    "final_9 = np.fft.ifftshift(transform_1)\n",
+    "final_9 = np.fft.ifft2(final_9)\n",
+    "image_9 = Image.fromarray(np.uint8(np.abs(final_9)))\n",
+    "image_9.show()\n",
+    "\n",
+    "final_10 = np.fft.ifftshift(transform_2)\n",
+    "final_10 = np.fft.ifft2(final_10)\n",
+    "max_ = np.max(np.max(final_10))\n",
+    "image_10 = Image.fromarray(np.uint8(np.abs(final_10)))\n",
+    "image_10.show()\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9a24b545",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
